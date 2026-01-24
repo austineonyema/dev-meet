@@ -1,0 +1,30 @@
+0000000000000000000000000000000000000000 c087a28bf0a4c58459d70bf020f84421a35a6a30 Austine The-Enigma <austine574@gmail.com> 1768725034 +0100	commit (initial): feat:pilot commit - PRoject setup
+c087a28bf0a4c58459d70bf020f84421a35a6a30 c087a28bf0a4c58459d70bf020f84421a35a6a30 Austine The-Enigma <austine574@gmail.com> 1768725040 +0100	Branch: renamed refs/heads/main to refs/heads/main
+c087a28bf0a4c58459d70bf020f84421a35a6a30 32b1209eb82f07b427928be6e06ebc060fadef58 Austine The-Enigma <austine574@gmail.com> 1768838129 +0100	commit: feat : added create and update profile dtos
+32b1209eb82f07b427928be6e06ebc060fadef58 6ada41104030aefab5bf0e4107389fecec4e9f3a Austine The-Enigma <austine574@gmail.com> 1768842395 +0100	commit: feat: finished up controller layer and setup bash code for testing for profile
+6ada41104030aefab5bf0e4107389fecec4e9f3a 495b64992b96cea0b935a5471a3283d6310f5175 Austine The-Enigma <austine574@gmail.com> 1768858915 +0100	commit: feat: fixed put controller, added interface for the profile, generated sample for profile
+495b64992b96cea0b935a5471a3283d6310f5175 0752b6891af000373a6c294bf69bab8248dbb9e5 Austine The-Enigma <austine574@gmail.com> 1768863581 +0100	commit: feat: added put and also cleaned up the directory properly
+0752b6891af000373a6c294bf69bab8248dbb9e5 2eda1cc3d67589346466604f345a56e680ae5c41 Austine The-Enigma <austine574@gmail.com> 1768926137 +0100	commit: feat: fixed delete issue, will be
+2eda1cc3d67589346466604f345a56e680ae5c41 8e4bfa1fd5f61e8c60d7c91977ebe322d1b4c241 Austine The-Enigma <austine574@gmail.com> 1768944515 +0100	commit: feat: fixed all requests, fixed the types and also the expected responses
+8e4bfa1fd5f61e8c60d7c91977ebe322d1b4c241 3e70c714c4a7cd855be5e42c2a6e05abf7e99aef Austine The-Enigma <austine574@gmail.com> 1768945352 +0100	commit: feat: fixed the naming system to ensure consistency
+3e70c714c4a7cd855be5e42c2a6e05abf7e99aef f3c5248c1beb45663d97978b217c6446ab60d2d8 Austine The-Enigma <austine574@gmail.com> 1768947252 +0100	commit: feat: first module done
+f3c5248c1beb45663d97978b217c6446ab60d2d8 ca2cc696ba3493a9ec82b648fa612adeb1690dcd Austine The-Enigma <austine574@gmail.com> 1768949478 +0100	commit: feat: added validators and transformers to the controllers
+ca2cc696ba3493a9ec82b648fa612adeb1690dcd bfb15575b11eecad1e319357a437552f1b3c0b0f Austine The-Enigma <austine574@gmail.com> 1768949916 +0100	commit: feat: added guards for the routes
+bfb15575b11eecad1e319357a437552f1b3c0b0f 3649ddb1d8bd586dcb90f271bc0ae0720b3f010e Austine The-Enigma <austine574@gmail.com> 1769007245 +0100	commit: feat: added database sync, and setup the connection
+3649ddb1d8bd586dcb90f271bc0ae0720b3f010e 50a81cc55d72102d7d541f1a38af1553224bd451 Austine The-Enigma <austine574@gmail.com> 1769016716 +0100	commit: feat: added prisma client, setup prisma config and schema files, setup user and post model
+50a81cc55d72102d7d541f1a38af1553224bd451 77058378a382084119ff6e1fe3d376bd9dc2522e Austine The-Enigma <austine574@gmail.com> 1769018781 +0100	commit: feat: everything nicely cleaned up
+77058378a382084119ff6e1fe3d376bd9dc2522e 1be196323cc89d6ec3acc06fcc919737186fbad2 Austine The-Enigma <austine574@gmail.com> 1769020610 +0100	commit: feat: handled generated models, migrations and necessary db adapter
+1be196323cc89d6ec3acc06fcc919737186fbad2 f3c1d87923be7643bbd5caa9d22c6ba75217832e Austine The-Enigma <austine574@gmail.com> 1769035382 +0100	commit: feat: fixed the migration files and renames the tables properly, setup basic database connection
+f3c1d87923be7643bbd5caa9d22c6ba75217832e a26e70b9195c03b01988d3b3d6fba5a9b58dd9de Austine The-Enigma <austine574@gmail.com> 1769035543 +0100	commit: feat: fixed generated type files
+a26e70b9195c03b01988d3b3d6fba5a9b58dd9de 1a96f0e067116ce99552a39418763bf2fc276c1e Austine The-Enigma <austine574@gmail.com> 1769057351 +0100	commit: feat:setup full crud for the user resource, most productive time so far
+1a96f0e067116ce99552a39418763bf2fc276c1e c454d6cd0f0686486df9de50fdecba25d19b1245 Austine The-Enigma <austine574@gmail.com> 1769100869 +0100	commit: feat: fixed legacy deps issue
+c454d6cd0f0686486df9de50fdecba25d19b1245 b60aa643018b191607c8c1372db02f8672df5ad9 Austine The-Enigma <austine574@gmail.com> 1769102973 +0100	commit: feat: added nest/jwt, nest/passport, passport
+b60aa643018b191607c8c1372db02f8672df5ad9 dbd2e60394bba2af8698f33809412d1828787cbd Austine The-Enigma <austine574@gmail.com> 1769159055 +0100	commit: feat: fixed the user service issues, fixed auth service, fixed nestjs dependency issues
+dbd2e60394bba2af8698f33809412d1828787cbd ba99747e4a99778e4dac8de2794a516a9bc7cf24 Austine The-Enigma <austine574@gmail.com> 1769192608 +0100	commit: feat: added git attributes to normalize line endings, added auth guard, added jwt strategy
+ba99747e4a99778e4dac8de2794a516a9bc7cf24 1724564a42c74f7075a2b1523612a72ad71e8ded Austine The-Enigma <austine574@gmail.com> 1769192674 +0100	commit: feat: added normalize
+1724564a42c74f7075a2b1523612a72ad71e8ded a0dcc01754c918c5a53314f8bd5de625f9e82e39 Austine The-Enigma <austine574@gmail.com> 1769206517 +0100	commit: feat: Normalize line endings
+a0dcc01754c918c5a53314f8bd5de625f9e82e39 c69e5a9bb11eede826aa29b9bff0ec92a0d1aa9f Austine The-Enigma <austine574@gmail.com> 1769207097 +0100	commit: feat: authentiction and other features are complete, only refactorings left
+c69e5a9bb11eede826aa29b9bff0ec92a0d1aa9f 3084e7c4b03dc4e7dc755aa6536809eec4da02dc Austine The-Enigma <austine574@gmail.com> 1769208785 +0100	commit: feat: added Cache mamnager to speed up developer workflow
+3084e7c4b03dc4e7dc755aa6536809eec4da02dc 174e03f5f07c1cad6d86949064ee5a5dc91a12e3 Austine The-Enigma <austine574@gmail.com> 1769209175 +0100	commit: feat: last commit for the day
+174e03f5f07c1cad6d86949064ee5a5dc91a12e3 66e44e083484c6da7a71fdabb13e870706641f7a Austine The-Enigma <austine574@gmail.com> 1769209815 +0100	commit: feat: first official feat for the day
+66e44e083484c6da7a71fdabb13e870706641f7a 62625731e7453f685c11e5839cbca46332e3b6ff Austine The-Enigma <austine574@gmail.com> 1769249277 +0100	commit: feat: authentication, route protection finalized
