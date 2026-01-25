@@ -1,0 +1,31 @@
+{
+  "name": "dev-meet",
+  "private": "true",
+  "version": "1.0.0",
+  "description": "Tinder but for software developers, systems engineer, computer scientists, cloud engineers etc",
+  "keywords": [
+    "dev",
+    "meet",
+    "tinder",
+    "for",
+    "devs",
+    "swipe",
+    "profiles"
+  ],
+  "homepage": "https://github.com/austineonyema/dev-meet#readme",
+  "bugs": {
+    "url": "https://github.com/austineonyema/dev-meet/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austineonyema/dev-meet.git"
+  },
+  "license": "ISC",
+  "author": "Austine Onyema - The Enigma",
+  "type": "module",
+  "scripts": {
+    "start:api": "npm --prefix ./api run start:dev",
+    "start:client": "npm --prefix ./client run start",
+    "start:all": "concurrently -k -n API,CLIENT -c cyan,magenta \"npm run start:api\" \"npm run start:client\""
+  }
+}
