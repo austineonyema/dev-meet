@@ -21,7 +21,10 @@ async function bootstrap() {
   // Set global prefix (all routes start with /api/v1)
   app.setGlobalPrefix('api/v1');
   // Now routes are: /api/v1/users, /api/v1/auth, etc
-
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  });
   await app.listen(3000);
 }
 bootstrap();
