@@ -27,5 +27,8 @@
     "start:api": "npm --prefix ./api run start:dev",
     "start:client": "npm --prefix ./client run start",
     "start:all": "concurrently -k -n API,CLIENT -c cyan,magenta \"npm run start:api\" \"npm run start:client\""
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2"
   }
 }
