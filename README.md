@@ -105,3 +105,37 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/devmeet
 JWT_SECRET=replace_with_a_secure_random_value
 PORT=3000
 REDIS_URL=redis://localhost:6379  # optional
+
+client/.env
+
+VITE_API_BASE_URL=http://localhost:3000/api/v1
+
+#Use openssl rand -base64 32 to generate a secure JWT_SECRET. 32 bytes is a strong default
+
+### 3. Database: Prisma setup & migrations
+
+From api/:
+
+Initialize Prisma (if not already):
+
+```bash npx prisma init
+
+
+Update prisma/schema.prisma with your User model and any relations.
+
+Run migration:
+
+npx prisma migrate dev --name init
+
+
+Generate client:
+
+npx prisma generate
+
+
+Optional: seed script — add prisma/seed.ts and run:
+
+npm run prisma:seed
+
+
+Note on updatedAt: Add @updatedAt in the Prisma schema to auto-update timestamps, otherwise set updatedAt: new Date() manually on updates.
