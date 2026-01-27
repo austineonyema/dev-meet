@@ -21,10 +21,12 @@ export default function Test() {
             <strong>Role:</strong> {u.role}
           </p>
           <p>
-            <strong>Created:</strong> {new Date(u.createdAt).toLocaleString()}
+            <strong>Created:</strong>{" "}
+            {new Date(u.createdAt ?? "").toLocaleString()}
           </p>
           <p>
-            <strong>Updated:</strong> {new Date(u.updatedAt).toLocaleString()}
+            <strong>Updated:</strong>{" "}
+            {new Date(u.updatedAt ?? "").toLocaleString()}
           </p>
           <hr />
         </div>
