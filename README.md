@@ -9,8 +9,6 @@ A production-minded full-stack starter built during development of the `dev-meet
 
 This README gives you everything you need to run, develop, test and extend the project as a senior engineer would.
 
----
-
 ## Table of contents
 
 1. [Quick status](#quick-status)
@@ -28,7 +26,6 @@ This README gives you everything you need to run, develop, test and extend the p
 13. [Extending the project — senior tips](#extending-the-project---senior-tips)
 14. [Acknowledgements & license](#acknowledgements--license)
 
----
 
 ## Quick status
 
@@ -37,7 +34,6 @@ This README gives you everything you need to run, develop, test and extend the p
 - Frontend: React + Vite + TypeScript with TanStack Query, React Router and Axios.
 - Shared typing pattern implemented for request/response contracts; date serialization strategy agreed (backend uses `Date`, API DTOs use `string` ISO dates).
 
----
 
 ## Tech stack
 
@@ -46,16 +42,12 @@ This README gives you everything you need to run, develop, test and extend the p
 - **Monorepo tools:** plain npm monorepo (root `package.json`), optional `concurrently` to manage dev processes
 - **Dev tools:** Prettier, ESLint, Husky (optional), Docker (optional for production/dev parity)
 
----
-
 ## Prerequisites
 
 - Node.js (use latest LTS; keep an eye on security advisories)
 - npm (or yarn/pnpm)
 - PostgreSQL (or your choice DB) running and accessible
 - Optional: Docker + Docker Compose if you prefer containerized local DB
-
----
 
 ## Repo layout
 
@@ -75,9 +67,7 @@ dev-meet/
 │ └── user.ts
 ├── package.json # (optional) root scripts e.g. start:all
 └── README.md
-
----
-
+```
 ## Getting started (local dev)
 
 ### 1. Clone & install
@@ -88,12 +78,7 @@ cd dev-meet
 
 cd api && npm install
 cd ../client && npm install
-
-npm install
-
-
-
-
+```
 ### 2. Environment variables
 
 Create .env files.
@@ -113,8 +98,6 @@ VITE_API_BASE_URL=http://localhost:3000/api/v1
 ```
 Use openssl rand -base64 32 to generate a secure JWT_SECRET. 32 bytes is a strong default
 
-
----
 ## Database: Prisma setup & migrations
 
 From api/:
