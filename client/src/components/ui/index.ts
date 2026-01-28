@@ -9,3 +9,4 @@ export {
   CardFooter,
 } from "./Card";
 export { Loading, LoadingSkeleton } from "./Loading";
+export { ScrollReveal } from "./ScrollReveal";
