@@ -1,3 +1,5 @@
-export { Header } from "./Header";
-export { Footer } from "./Footer";
-export { Layout } from "./Layout";
+export * from "./Footer";
+export * from "./Header";
+export * from "./Layout";
+export * from "./AuthLayout";
+export * from "./DashboardLayout";
