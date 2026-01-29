@@ -77,3 +77,10 @@ docker-compose.override.yml
 tmp/
 temp/
 *.tmp
+
+
+############################
+# Task.md
+############################
+task.md
+implementation_plan.md

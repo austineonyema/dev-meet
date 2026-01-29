@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { mockUser } from "../../data/user";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 export function DashboardLayout() {
   const location = useLocation();
@@ -217,6 +218,7 @@ export function DashboardLayout() {
           <div className="scanline absolute inset-0 pointer-events-none z-10 opacity-30 h-full" />
 
           <div className="p-6 md:p-8 lg:p-10 relative z-2">
+            <Breadcrumbs />
             <Outlet />
           </div>
         </main>

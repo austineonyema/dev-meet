@@ -8,6 +8,6 @@ export {
   CardContent,
   CardFooter,
 } from "./Card";
-export { Loading, LoadingSkeleton } from "./Loading";
+export { Loading, LoadingSkeleton, PostSkeleton } from "./Loading";
 export { ScrollReveal } from "./ScrollReveal";
 export { TerminalConfirm } from "./TerminalConfirm";

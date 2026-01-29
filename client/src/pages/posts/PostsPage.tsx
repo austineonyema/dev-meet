@@ -10,16 +10,20 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button, ScrollReveal } from "../../components/ui";
-import { mockPosts } from "../../data/posts";
+
+import { usePosts } from "../../features/posts/hooks/usePosts";
+import { PostSkeleton } from "../../components/ui";
 
 export default function PostsPage() {
+  const { data: posts, isLoading } = usePosts();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
   const categories = ["ALL", "KERNEL", "SUDO", "GIT", "FRONTEND", "NETWORKING"];
 
   const filteredPosts = useMemo(() => {
-    return mockPosts.filter((post) => {
+    if (!posts) return [];
+    return posts.filter((post) => {
       const matchesSearch =
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -33,7 +37,7 @@ export default function PostsPage() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [posts, searchQuery, selectedCategory]);
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
@@ -95,7 +99,9 @@ export default function PostsPage() {
 
       {/* Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredPosts.length > 0 ? (
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => <PostSkeleton key={i} />)
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map((post, i) => (
             <ScrollReveal key={post.id} delay={i * 100} distance={20}>
               <Link to={`/posts/${post.id}`} className="group block h-full">

@@ -43,6 +43,29 @@ interface LoadingSkeletonProps {
 
 export function LoadingSkeleton({ className = "" }: LoadingSkeletonProps) {
   return (
-    <div className={`animate-pulse bg-surface-700 rounded ${className}`} />
+    <div className={`animate-pulse bg-surface-700/50 rounded ${className}`} />
+  );
+}
+
+export function PostSkeleton() {
+  return (
+    <div className="terminal-box rounded-xl border-terminal/10 p-6 flex flex-col space-y-4">
+      <div className="flex justify-between">
+        <LoadingSkeleton className="h-4 w-20" />
+        <LoadingSkeleton className="h-4 w-24" />
+      </div>
+      <LoadingSkeleton className="h-8 w-3/4" />
+      <div className="space-y-2">
+        <LoadingSkeleton className="h-4 w-full" />
+        <LoadingSkeleton className="h-4 w-5/6" />
+      </div>
+      <div className="pt-4 border-t border-terminal/5 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <LoadingSkeleton className="w-6 h-6 rounded" />
+          <LoadingSkeleton className="h-3 w-16" />
+        </div>
+        <LoadingSkeleton className="h-3 w-12" />
+      </div>
+    </div>
   );
 }

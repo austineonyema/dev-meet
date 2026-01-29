@@ -21,14 +21,37 @@ const PostPreview = lazy(() => import("./PostPreview"));
 
 type LayoutMode = "side" | "stack" | "hidden";
 
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { postSchema } from "../../features/posts/schemas/post";
+import type { PostFormData } from "../../features/posts/schemas/post";
+import { useCreatePost } from "../../features/posts/hooks/useCreatePost";
+
 export default function PostEditor() {
   const navigate = useNavigate();
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("side");
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  const createPostMutation = useCreatePost();
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    setValue,
+  } = useForm<PostFormData>({
+    resolver: zodResolver(postSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+    },
+  });
+
+  const title = watch("title");
+  const content = watch("content");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -43,6 +66,14 @@ export default function PostEditor() {
     return () => clearInterval(timer);
   }, [content, title]);
 
+  const onSubmit = (data: PostFormData) => {
+    createPostMutation.mutate(data, {
+      onSuccess: () => {
+        navigate("/posts");
+      },
+    });
+  };
+
   const toolbarActions = [
     { icon: Type, label: "Heading", action: "\n## " },
     { icon: Code2, label: "Code", action: "\n```\n\n```" },
@@ -51,7 +82,7 @@ export default function PostEditor() {
   ];
 
   const insertText = (text: string) => {
-    setContent((prev) => prev + text);
+    setValue("content", content + text);
   };
 
   return (
@@ -129,10 +160,20 @@ export default function PostEditor() {
           </Button>
           <Button
             size="sm"
-            className="bg-terminal hover:bg-terminal-dim text-surface-950 font-bold font-mono px-6 shadow-[0_0_15px_rgba(0,255,65,0.3)]"
-            onClick={() => navigate("/dashboard")}
+            disabled={createPostMutation.isPending}
+            className="bg-terminal hover:bg-terminal-dim text-surface-950 font-bold font-mono px-6 shadow-[0_0_15px_rgba(0,255,65,0.3)] disabled:opacity-50"
+            onClick={handleSubmit(onSubmit)}
           >
-            <Send className="w-3.5 h-3.5 mr-2" /> PUSH
+            {createPostMutation.isPending ? (
+              <span className="flex items-center gap-2">
+                <div className="w-3 h-3 border-2 border-surface-950 border-t-transparent rounded-full animate-spin" />
+                STAGING...
+              </span>
+            ) : (
+              <>
+                <Send className="w-3.5 h-3.5 mr-2" /> PUSH
+              </>
+            )}
           </Button>
         </div>
       </header>
@@ -170,13 +211,27 @@ export default function PostEditor() {
               INSERT_PANE
             </div>
           </div>
-          <input
-            type="text"
-            placeholder="title goes here..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-surface-900/10 border-none px-6 py-4 sm:py-8 font-bold text-2xl sm:text-3xl text-text-primary focus:outline-none placeholder:text-text-muted/40 font-mono tracking-tight"
-          />
+          <div className="px-6 py-2">
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-col">
+                  <input
+                    {...field}
+                    type="text"
+                    placeholder="title goes here..."
+                    className={`w-full bg-surface-900/10 border-none py-4 sm:py-8 font-bold text-2xl sm:text-3xl text-text-primary focus:outline-none placeholder:text-text-muted/40 font-mono tracking-tight ${errors.title ? "text-error" : ""}`}
+                  />
+                  {errors.title && (
+                    <span className="text-[10px] font-mono text-error uppercase tracking-widest mt-[-20px] mb-4">
+                      {`ERR: ${errors.title.message}`}
+                    </span>
+                  )}
+                </div>
+              )}
+            />
+          </div>
           <Suspense
             fallback={
               <div className="flex-1 flex items-center justify-center font-mono text-terminal/40 animate-pulse bg-surface-950">
@@ -184,7 +239,25 @@ export default function PostEditor() {
               </div>
             }
           >
-            <PostEditorInput content={content} setContent={setContent} />
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <div className="flex-1 flex flex-col min-h-0">
+                  <PostEditorInput
+                    content={field.value}
+                    setContent={field.onChange}
+                  />
+                  {errors.content && (
+                    <div className="bg-error/10 border-t border-error/20 p-2">
+                      <span className="text-[10px] font-mono text-error uppercase tracking-widest leading-none">
+                        {`ERR: ${errors.content.message}`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            />
           </Suspense>
         </div>
 
