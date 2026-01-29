@@ -24,7 +24,7 @@ export class AuthController {
   @Get('user')
   @UseGuards(JwtAuthGuard)
   getProfile(@CurrentUser() user: JwtPayload) {
-    // @CurrentUSer() automatically gives us the loggedin user
+    //// @CurrentUSer() automatically gives us the loggedin user
     return user;
   }
 }

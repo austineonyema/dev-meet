@@ -4,6 +4,7 @@ import { LoginDto } from './dto/login.dto';
 import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     // Create user (UsersService handles hashing and validation)
     const user = await this.user.create(registerDto);
     // Generate JWT token
-    const token = this.generateToken(user.id, user.email);
+    const token = this.generateToken(user.id, user.email, user.role);
     return {
       ...user, // User data (without password)
       access_token: token, // JWT token
@@ -31,7 +32,7 @@ export class AuthService {
     // Step 2: Verify password
     await this.validatePassword(loginDto.password, user.password);
     // Step 3: Generate JWT token
-    const token = this.generateToken(user.id, user.email);
+    const token = this.generateToken(user.id, user.email, user.role);
 
     return {
       user: {
@@ -65,11 +66,12 @@ export class AuthService {
   }
 
   // PRIVATE: Generate JWT token
-  private generateToken(userId: string, email: string): string {
+  private generateToken(userId: string, email: string, role: Role): string {
     // Payload (data stored in token)
     const payload = {
       sub: userId, // "sub" is JWT standard for user ID it refers to the subscriber
       email: email, // Include email for convenience
+      role: role,
     };
 
     // Sign and return token

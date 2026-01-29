@@ -19,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const secret = config.get<string>('JWT_SECRET');
-        const expires = config.get<string>('JWT_EXPIRES_IN') ?? '5m';
+        const expires = config.get<string>('JWT_EXPIRES_IN') ?? '50m';
 
         if (!secret) throw new Error('JWT_SECRET missing');
 
