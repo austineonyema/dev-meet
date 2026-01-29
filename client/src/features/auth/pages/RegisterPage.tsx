@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Lock, Mail, User, Code2 } from "lucide-react";
-import { Button, Input } from "../../components/ui";
+import { Button, Input } from "../../../components/ui";
 
 export default function RegisterPage() {
   const navigate = useNavigate();

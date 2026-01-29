@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Search,
   Terminal,
@@ -9,15 +9,27 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button, ScrollReveal } from "../../components/ui";
+import { Button, ScrollReveal } from "../../../components/ui";
 
-import { usePosts } from "../../features/posts/hooks/usePosts";
-import { PostSkeleton } from "../../components/ui";
+import { usePosts } from "../hooks/usePosts";
+import { PostSkeleton } from "../../../components/ui";
 
 export default function PostsPage() {
   const { data: posts, isLoading } = usePosts();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+
+  // Senior Optimization: Pre-fetch PostEditor chunks when entering the Hub
+  useEffect(() => {
+    // These match the lazy imports in PostEditor.tsx
+    const prefetch = () => {
+      import("../components/PostEditorInput");
+      import("../components/PostPreview");
+    };
+    // Delay slightly to prioritize Hub rendering
+    const timer = setTimeout(prefetch, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const categories = ["ALL", "KERNEL", "SUDO", "GIT", "FRONTEND", "NETWORKING"];
 

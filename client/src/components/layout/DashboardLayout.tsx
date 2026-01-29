@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import { mockUser } from "../../data/user";
 import { Breadcrumbs } from "./Breadcrumbs";
+import { CommandBar } from "../navigation/CommandBar";
 
 export function DashboardLayout() {
   const location = useLocation();
@@ -47,6 +48,7 @@ export function DashboardLayout() {
 
   return (
     <div className="flex h-screen bg-surface-950 text-text-primary overflow-hidden font-sans">
+      <CommandBar />
       {/* Sidebar */}
       <aside
         className={`${

@@ -1,17 +1,17 @@
 import { Routes, Route, Outlet } from "react-router-dom";
-import LoginPage from "./pages/auth/LoginPage";
-import RegisterPage from "./pages/auth/RegisterPage";
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import ProfilePage from "./pages/profile/ProfilePage";
-import PostsPage from "./pages/posts/PostsPage";
-import PostEditor from "./components/features/PostEditor";
-import PostDetailPage from "./pages/posts/PostDetailPage";
+import LoginPage from "./features/auth/pages/LoginPage";
+import RegisterPage from "./features/auth/pages/RegisterPage";
+import DashboardPage from "./features/dashboard/pages/DashboardPage";
+import ProfilePage from "./features/profile/pages/ProfilePage";
+import PostsPage from "./features/posts/pages/PostsPage";
+import PostEditor from "./features/posts/components/PostEditor";
+import PostDetailPage from "./features/posts/pages/PostDetailPage";
 import { AuthLayout, Layout, DashboardLayout } from "./components/layout";
 import HomePage from "./pages/HomePage";
 import Test from "./pages/Test";
 import { usePageTitle } from "./hooks/usePageTitle";
 
-import SettingsPage from "./pages/settings/SettingsPage";
+import SettingsPage from "./features/settings/pages/SettingsPage";
 
 function App() {
   usePageTitle();

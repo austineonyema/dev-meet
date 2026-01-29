@@ -10,9 +10,9 @@ import {
   MessageCircle,
   Share2,
 } from "lucide-react";
-import { Button, ScrollReveal } from "../../components/ui";
-import { activityFeed } from "../../data/feed";
-import { mockUser } from "../../data/user";
+import { Button, ScrollReveal } from "../../../components/ui";
+import { activityFeed } from "../../../data/feed";
+import { mockUser } from "../../../data/user";
 
 export default function DashboardPage() {
   return (

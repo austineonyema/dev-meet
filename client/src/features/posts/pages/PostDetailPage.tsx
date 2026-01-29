@@ -12,8 +12,8 @@ import {
   Bookmark,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { mockPosts, type Post } from "../../data/posts";
-import { Button, ScrollReveal } from "../../components/ui";
+import { mockPosts, type Post } from "../../../data/posts";
+import { Button, ScrollReveal } from "../../../components/ui";
 
 export default function PostDetailPage() {
   const { id } = useParams();

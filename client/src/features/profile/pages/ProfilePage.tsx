@@ -10,9 +10,9 @@ import {
   ExternalLink,
   ChevronRight,
 } from "lucide-react";
-import { Button, ScrollReveal } from "../../components/ui";
-import { mockUser } from "../../data/user";
-import { contributionData } from "../../data/feed";
+import { Button, ScrollReveal } from "../../../components/ui";
+import { mockUser } from "../../../data/user";
+import { contributionData } from "../../../data/feed";
 
 export default function ProfilePage() {
   return (

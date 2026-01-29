@@ -14,7 +14,7 @@ import {
   Maximize2,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui";
+import { Button } from "../../../components/ui";
 
 const PostEditorInput = lazy(() => import("./PostEditorInput"));
 const PostPreview = lazy(() => import("./PostPreview"));
@@ -23,9 +23,9 @@ type LayoutMode = "side" | "stack" | "hidden";
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { postSchema } from "../../features/posts/schemas/post";
-import type { PostFormData } from "../../features/posts/schemas/post";
-import { useCreatePost } from "../../features/posts/hooks/useCreatePost";
+import { postSchema } from "../schemas/post";
+import type { PostFormData } from "../schemas/post";
+import { useCreatePost } from "../hooks/useCreatePost";
 
 export default function PostEditor() {
   const navigate = useNavigate();
@@ -42,16 +42,23 @@ export default function PostEditor() {
     watch,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      title: "",
-      content: "",
+      title: localStorage.getItem("post_draft_title") || "",
+      content: localStorage.getItem("post_draft_content") || "",
     },
   });
 
   const title = watch("title");
   const content = watch("content");
+
+  // Save draft to localStorage
+  useEffect(() => {
+    localStorage.setItem("post_draft_title", title);
+    localStorage.setItem("post_draft_content", content);
+  }, [title, content]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -69,9 +76,20 @@ export default function PostEditor() {
   const onSubmit = (data: PostFormData) => {
     createPostMutation.mutate(data, {
       onSuccess: () => {
+        // Clear draft on success
+        localStorage.removeItem("post_draft_title");
+        localStorage.removeItem("post_draft_content");
         navigate("/posts");
       },
     });
+  };
+
+  const clearDraft = () => {
+    if (confirm("Are you sure you want to clear the current buffer?")) {
+      reset({ title: "", content: "" });
+      localStorage.removeItem("post_draft_title");
+      localStorage.removeItem("post_draft_content");
+    }
   };
 
   const toolbarActions = [
@@ -149,6 +167,14 @@ export default function PostEditor() {
             </button>
           </div>
 
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearDraft}
+            className="font-mono text-[10px] text-error/60 hover:text-error hover:bg-error/5 border border-transparent hover:border-error/20"
+          >
+            $ rm -rf draft
+          </Button>
           <Button
             variant="ghost"
             size="sm"
