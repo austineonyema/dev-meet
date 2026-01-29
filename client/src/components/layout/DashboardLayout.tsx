@@ -148,6 +148,17 @@ export function DashboardLayout() {
             </div>
           </div>
         )}
+
+        {/* Desktop Collapse Toggle */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="hidden md:flex items-center justify-center p-2 border-t border-terminal/10 text-text-muted hover:text-terminal hover:bg-surface-800 transition-all"
+          title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+        >
+          <ChevronRight
+            className={`w-4 h-4 transition-transform duration-300 ${isSidebarOpen ? "rotate-180" : ""}`}
+          />
+        </button>
       </aside>
 
       {/* Main Content */}

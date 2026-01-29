@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Custom theme configuration for dev-meet */
+/* Custom theme configuration for dev-meet (Tailwind 4 @theme syntax) */
 @theme {
   /* Terminal green accent */
   --color-terminal: #00ff41;
@@ -216,5 +216,9 @@
     @apply inline-flex items-center justify-center px-2 py-0.5 text-xs font-mono;
     @apply bg-surface-700 border border-surface-500 rounded text-text-secondary;
     box-shadow: 0 2px 0 var(--color-surface-600);
+  }
+
+  .scrollbar-stable {
+    scrollbar-gutter: stable;
   }
 }

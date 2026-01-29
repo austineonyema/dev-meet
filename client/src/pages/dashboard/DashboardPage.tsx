@@ -119,9 +119,9 @@ export default function DashboardPage() {
               >
                 <div className="terminal-box rounded-xl border-terminal/10 overflow-hidden hover:border-terminal/20 transition-colors">
                   <div className="p-4 sm:p-5">
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-surface-800 border border-terminal/20 overflow-hidden flex items-center justify-center text-terminal font-mono text-sm font-bold">
+                    <div className="flex items-start justify-between gap-2 sm:gap-4 mb-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-surface-800 border border-terminal/20 overflow-hidden shrink-0 flex items-center justify-center text-terminal font-mono text-sm font-bold">
                           {activity.user.avatar ? (
                             <img
                               src={activity.user.avatar}
@@ -132,22 +132,24 @@ export default function DashboardPage() {
                             activity.user.name.charAt(0)
                           )}
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-text-primary flex items-center gap-2">
-                            {activity.user.name}
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-bold text-text-primary flex items-center gap-2 truncate">
+                            <span className="truncate">
+                              {activity.user.name}
+                            </span>
                             {activity.user.username === mockUser.username && (
-                              <span className="text-[10px] bg-terminal/10 text-terminal px-1.5 py-0.5 rounded border border-terminal/20">
+                              <span className="text-[9px] sm:text-[10px] bg-terminal/10 text-terminal px-1 sm:px-1.5 py-0.5 rounded border border-terminal/20 shrink-0">
                                 ME
                               </span>
                             )}
                           </p>
-                          <p className="text-[10px] text-text-muted font-mono">
+                          <p className="text-[9px] sm:text-[10px] text-text-muted font-mono truncate">
                             @{activity.user.username} • {activity.timestamp}
                           </p>
                         </div>
                       </div>
-                      <button className="text-text-muted hover:text-terminal transition-colors">
-                        <ArrowUpRight className="w-4 h-4" />
+                      <button className="text-text-muted hover:text-terminal transition-colors shrink-0 p-1">
+                        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </button>
                     </div>
 

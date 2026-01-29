@@ -10,3 +10,4 @@ export {
 } from "./Card";
 export { Loading, LoadingSkeleton } from "./Loading";
 export { ScrollReveal } from "./ScrollReveal";
+export { TerminalConfirm } from "./TerminalConfirm";

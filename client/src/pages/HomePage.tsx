@@ -276,19 +276,19 @@ export default function HomePage() {
                   {recentActivity.map((activity, index) => (
                     <div
                       key={activity.hash}
-                      className="flex items-start gap-3 py-2 border-b border-terminal/5 last:border-0"
+                      className="group flex items-center gap-2 sm:gap-3 py-2 border-b border-terminal/5 last:border-0 min-w-0 overflow-hidden"
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
-                      <span className="text-yellow-500/80 shrink-0">
+                      <span className="text-yellow-500/80 shrink-0 font-mono text-[10px] sm:text-xs opacity-50 hidden xs:inline">
                         {activity.hash}
                       </span>
-                      <span className="text-terminal shrink-0">
+                      <span className="text-terminal shrink-0 font-bold text-xs sm:text-sm">
                         @{activity.user}
                       </span>
-                      <span className="text-text-secondary flex-1">
+                      <span className="text-text-secondary flex-1 min-w-0 truncate text-xs sm:text-sm">
                         {activity.action}
                       </span>
-                      <span className="text-text-muted shrink-0">
+                      <span className="text-text-muted shrink-0 text-[10px] sm:text-xs font-mono ml-auto opacity-60 group-hover:opacity-100 transition-opacity">
                         {activity.time}
                       </span>
                     </div>
