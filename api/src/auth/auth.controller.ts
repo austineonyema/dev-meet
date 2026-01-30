@@ -26,7 +26,7 @@ export class AuthController {
 
   @Get('user')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   getProfile(@CurrentUser() user: JwtPayload) {
     //// @CurrentUSer() automatically gives us the loggedin user
     return user;
