@@ -8,34 +8,87 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   name      String?
   password  String
   posts     Post[]
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  tags      Tag[]
+  comments  Comment[]
+  likes     Like[]
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("users")
 }
 
 model Post {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   title     String
   content   String
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  published Boolean?  @default(false)
+  author    User?     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  Tags      Tag[]
+  comments  Comment[]
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([updatedAt, authorId])
   @@map("posts")
+}
+
+model Tag {
+  id        String   @id() @default(uuid())
+  name      String   @unique()
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@map("tags")
+}
+
+model Comment {
+  id        String   @id() @default(uuid())
+  comment   String   @unique()
+  type      Type     @default(comment)
+  likes     Like[]
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt, type])
+  @@map("comments")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    String?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId String?
+  createdAt DateTime @default(now())
+
+  @@map("likes")
 }
 
 enum Role {
   USER
   ADMIN
   MODERATOR
+}
+
+enum Type {
+  comment
+  response
 }
