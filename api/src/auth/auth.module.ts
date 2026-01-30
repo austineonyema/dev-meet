@@ -8,8 +8,9 @@ import { PassportModule } from '@nestjs/passport';
 //import { CacheModule } from '@nestjs/cache-manager';
 import ms from 'ms';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RolesGuard } from './roles.guard';
 @Module({
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, RolesGuard],
   controllers: [AuthController],
   imports: [
     UserModule,

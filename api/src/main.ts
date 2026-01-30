@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
@@ -17,7 +17,7 @@ async function bootstrap() {
       // Converts plain JavaScript objects to class instances
     }),
   );
-
+  app.useGlobalGuards(app.get(Reflector));
   // Set global prefix (all routes start with /api/v1)
   app.setGlobalPrefix('api/v1');
   // Now routes are: /api/v1/users, /api/v1/auth, etc
