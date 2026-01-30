@@ -18,6 +18,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import type { User } from './user.interface';
 import type { UUID } from 'crypto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Role } from '@prisma/client';
+import { Roles } from 'src/commons/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('user')
 //@UseGuards(JwtAuthGuard)
@@ -31,7 +34,8 @@ export class UserController {
   }
 
   @Get()
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
