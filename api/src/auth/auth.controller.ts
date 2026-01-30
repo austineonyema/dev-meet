@@ -4,10 +4,10 @@ import { RegisterDTO } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from 'src/commons/decorators/current-user';
-import type { JwtPayload } from './types/jwt-payload';
 import { Roles } from 'src/commons/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { RolesGuard } from './roles.guard';
+import type { AuthUser } from './types/auth-request';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -27,7 +27,7 @@ export class AuthController {
   @Get('user')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.USER)
-  getProfile(@CurrentUser() user: JwtPayload) {
+  getProfile(@CurrentUser() user: AuthUser) {
     //// @CurrentUSer() automatically gives us the loggedin user
     return user;
   }
