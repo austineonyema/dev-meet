@@ -18,11 +18,3 @@ export class CreateUserDto {
   @IsEnum(Role, { message: 'Invalid Role' })
   role?: Role;
 }
-
-//  "assets": [
-//     {
-//       "include": "/src/generated/prisma",
-//       "outDir": "dist/prisma",
-//       "watchAssets": true
-//     }
-//   ]

@@ -17,7 +17,47 @@ export class PostsService {
     return post;
   }
 
-  async findAll(authorId: string): Promise<Post[]> {
+  async findAll(): Promise<Post[]> {
+    const posts = await this.prismaService.post.findMany();
+    return posts;
+  }
+
+  async findOne(id: string): Promise<Post> {
+    const post = await this.prismaService.post.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!post) throw new NotFoundException(`Post with id : ${id} not found`);
+    return post;
+  }
+
+  async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+    await this.findOne(id);
+    const upDate = await this.prismaService.post.update({
+      where: {
+        id,
+      },
+      data: {
+        ...updatePostDto,
+      },
+    });
+    return upDate;
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.findOne(id);
+    await this.prismaService.post.delete({
+      where: {
+        id,
+      },
+    });
+    return;
+  }
+
+  // ---------------- User Specific -------------------
+
+  async findAllByUser(authorId: string): Promise<Post[]> {
     const posts = await this.prismaService.post.findMany({
       where: {
         authorId: authorId,
@@ -26,7 +66,7 @@ export class PostsService {
     return posts;
   }
 
-  async findOne(authorId: string, id: string): Promise<Post> {
+  async findOneByUser(authorId: string, id: string): Promise<Post> {
     const post = await this.prismaService.post.findUnique({
       where: {
         id,
@@ -37,22 +77,21 @@ export class PostsService {
     return post;
   }
 
-  async update(authorId: string, id: string, updatePostDto: UpdatePostDto): Promise<Post> {
-    await this.findOne(authorId, id);
+  async updateByUser(authorId: string, id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+    await this.findOneByUser(authorId, id);
     const upDate = await this.prismaService.post.update({
       where: {
         id,
       },
       data: {
         ...updatePostDto,
-        authorId,
       },
     });
     return upDate;
   }
 
-  async remove(authorId: string, id: string): Promise<void> {
-    await this.findOne(authorId, id);
+  async removeByUser(authorId: string, id: string): Promise<void> {
+    await this.findOneByUser(authorId, id);
     await this.prismaService.post.delete({
       where: {
         id,

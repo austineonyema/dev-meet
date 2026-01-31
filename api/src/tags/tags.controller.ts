@@ -1,16 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { TagsService } from './tags.service';
-import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import type { UUID } from 'crypto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+
+//TODO : to add admin role protection
 
 @Controller('tags')
+@UseGuards(JwtAuthGuard)
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
-
-  @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagsService.create(createTagDto);
-  }
 
   @Get()
   findAll() {
@@ -18,17 +26,17 @@ export class TagsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: UUID) {
+    return this.tagsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagsService.update(+id, updateTagDto);
+  update(@Param('id', ParseUUIDPipe) id: UUID, @Body() updateTagDto: UpdateTagDto) {
+    return this.tagsService.update(id, updateTagDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tagsService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: UUID) {
+    return this.tagsService.remove(id);
   }
 }

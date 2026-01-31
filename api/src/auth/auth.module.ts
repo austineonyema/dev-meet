@@ -20,7 +20,7 @@ import { RolesGuard } from './roles.guard';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const secret = config.get<string>('JWT_SECRET');
-        const expires = config.get<string>('JWT_EXPIRES_IN') ?? '50m';
+        const expires = config.get<string>('JWT_EXPIRES_IN') ?? '90m';
 
         if (!secret) throw new Error('JWT_SECRET missing');
 
