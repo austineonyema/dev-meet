@@ -189,7 +189,7 @@ export class PostsService {
     updatePostDto: UpdatePostDto,
   ): Promise<PostWithRelations> {
     await this.findOneByUser(authorId, id);
-    const upDate = await this.prismaService.post.update({
+    return await this.prismaService.post.update({
       where: {
         id,
       },
@@ -198,7 +198,6 @@ export class PostsService {
       },
       include: postInclude,
     });
-    return upDate;
   }
 
   /**

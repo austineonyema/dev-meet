@@ -77,7 +77,7 @@ export class TagsService {
    */
   async update(id: string, updateTagDto: UpdateTagDto): Promise<TagWithRelations> {
     await this.ensureTagExists(id);
-    const updated = await this.prismaService.tag.update({
+    return await this.prismaService.tag.update({
       where: {
         id,
       },
@@ -86,7 +86,6 @@ export class TagsService {
       },
       include: tagInclude,
     });
-    return updated;
   }
 
   /**
@@ -170,7 +169,7 @@ export class TagsService {
     updateTagDto: UpdateTagDto,
   ): Promise<TagWithRelations> {
     await this.findOneByUser(authorId, id);
-    const updated = await this.prismaService.tag.update({
+    return await this.prismaService.tag.update({
       where: {
         id,
         authorId,
@@ -180,7 +179,6 @@ export class TagsService {
       },
       include: tagInclude,
     });
-    return updated;
   }
 
   /**
