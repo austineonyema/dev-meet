@@ -2,15 +2,9 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Post, Tag, User } from '@prisma/client';
+import { Post } from '@prisma/client';
+import { postInclude, PostWithRelations } from 'src/types/post-with-relation';
 
-/**
- * Description placeholder
- *
- * @export
- * @class PostsService
- * @typedef {PostsService}
- */
 @Injectable()
 export class PostsService {
   /**
@@ -20,20 +14,10 @@ export class PostsService {
    * @param {PrismaService} prismaService
    */
   constructor(private prismaService: PrismaService) {}
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} authorId
-   * @param {CreatePostDto} createPostDto
-   * @returns {Promise<Promise<Post & { author: User; tags: Tag[] }>>}
-   */
-  async create(
-    authorId: string,
-    createPostDto: CreatePostDto,
-  ): Promise<Promise<Post & { author: User; tags: Tag[] }>> {
+
+  async create(authorId: string, createPostDto: CreatePostDto): Promise<PostWithRelations> {
     const validTagIds = await this.validateTags(createPostDto.tagIds);
-    const post = await this.prismaService.post.create({
+    return await this.prismaService.post.create({
       data: {
         title: createPostDto.title,
         content: createPostDto.content,
@@ -45,151 +29,90 @@ export class PostsService {
             }
           : undefined,
       },
-      include: {
-        author: true,
-        tags: true,
-      },
+      include: postInclude,
     });
-    return post;
   }
 
-  /**
-   * Validates that all tag IDs exist in the database.
-   * Returns an array of valid tag IDs to be used in Prisma connect.
-   * Throws BadRequestException if any tag ID is invalid.
-   *
-   * @private
-   * @async
-   * @param {?string[]} [tagIds]
-   * @returns {Promise<string[]>}
-   */
-  private async validateTags(tagIds?: string[]): Promise<string[]> {
-    if (!tagIds || tagIds.length === 0) return [];
+  /* -------------------------------------------------------------------------- */
+  /*                                GLOBAL POSTS                                */
+  /* -------------------------------------------------------------------------- */
 
-    const validTags = await this.prismaService.tag.findMany({
-      where: { id: { in: tagIds } },
-      select: { id: true },
+  /**
+   * Fetch all posts (public feed)
+   */
+  async findAll(): Promise<PostWithRelations[]> {
+    return this.prismaService.post.findMany({
+      include: postInclude,
     });
-
-    if (validTags.length !== tagIds.length) {
-      throw new BadRequestException('Some tag IDs are invalid');
-    }
-
-    return validTags.map((tag) => tag.id);
   }
 
   /**
-   * Description placeholder
-   *
-   * @async
-   * @returns {Promise<Post[]>}
+   * Fetch single post by ID
    */
-  async findAll(): Promise<Post[]> {
-    const posts = await this.prismaService.post.findMany();
-    return posts;
-  }
-
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} id
-   * @returns {Promise<Post>}
-   */
-  async findOne(id: string): Promise<Post> {
-    const post = await this.prismaService.post.findUnique({
+  async findOne(id: string): Promise<PostWithRelations> {
+    const post = await this.prismaService.post.findFirst({
       where: {
         id,
       },
+      include: postInclude,
     });
     if (!post) throw new NotFoundException(`Post with id : ${id} not found`);
     return post;
   }
 
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} id
-   * @param {UpdatePostDto} updatePostDto
-   * @returns {Promise<Post>}
-   */
-  async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
-    await this.findOne(id);
-    const upDate = await this.prismaService.post.update({
+  async update(id: string, updatePostDto: UpdatePostDto): Promise<PostWithRelations> {
+    await this.ensurePostExists(id);
+    return this.prismaService.post.update({
       where: {
         id,
       },
       data: {
         ...updatePostDto,
       },
+      include: postInclude,
     });
-    return upDate;
   }
 
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} id
-   * @returns {Promise<void>}
-   */
   async remove(id: string): Promise<void> {
-    await this.findOne(id);
+    await this.ensurePostExists(id);
     await this.prismaService.post.delete({
       where: {
         id,
       },
     });
-    return;
   }
 
-  // ---------------- User Specific -------------------
+  /* -------------------------------------------------------------------------- */
+  /*                              USER-SCOPED POSTS                             */
+  /* -------------------------------------------------------------------------- */
 
   /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} authorId
-   * @returns {Promise<Post[]>}
+   * Posts created by a specific user
    */
-  async findAllByUser(authorId: string): Promise<Post[]> {
-    const posts = await this.prismaService.post.findMany({
+  async findAllByUser(authorId: string): Promise<PostWithRelations[]> {
+    return await this.prismaService.post.findMany({
       where: {
-        authorId: authorId,
+        authorId,
       },
+      include: postInclude,
     });
-    return posts;
   }
 
   /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} authorId
-   * @param {string} id
-   * @returns {Promise<Post>}
+   * Get one post belonging to a specific user
    */
-  async findOneByUser(authorId: string, id: string): Promise<Post> {
-    const post = await this.prismaService.post.findUnique({
+  async findOneByUser(authorId: string, id: string): Promise<PostWithRelations> {
+    const post = await this.prismaService.post.findFirst({
       where: {
         id,
         authorId,
       },
+      include: postInclude,
     });
     if (!post) throw new NotFoundException(`Post with id : ${id} not found`);
     return post;
   }
 
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} authorId
-   * @param {string} id
-   * @param {UpdatePostDto} updatePostDto
-   * @returns {Promise<Post>}
-   */
   async updateByUser(authorId: string, id: string, updatePostDto: UpdatePostDto): Promise<Post> {
     await this.findOneByUser(authorId, id);
     const upDate = await this.prismaService.post.update({
@@ -203,14 +126,6 @@ export class PostsService {
     return upDate;
   }
 
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {string} authorId
-   * @param {string} id
-   * @returns {Promise<void>}
-   */
   async removeByUser(authorId: string, id: string): Promise<void> {
     await this.findOneByUser(authorId, id);
     await this.prismaService.post.delete({
@@ -220,5 +135,31 @@ export class PostsService {
       },
     });
     return;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                             INTERNAL UTILITIES                             */
+  /* -------------------------------------------------------------------------- */
+  /**
+   * Ensures post exists before further manipulation
+   */
+  private async ensurePostExists(id: string) {
+    const exists = await this.prismaService.post.findUnique({ where: { id } });
+    if (!exists) throw new NotFoundException(`Post ${id} not found`);
+  }
+
+  /**
+   * Ensures all tag IDs exist before connecting them
+   */
+  private async validateTags(tagIds?: string[]): Promise<string[]> {
+    if (!tagIds || tagIds.length === 0) return [];
+    const validTags = await this.prismaService.tag.findMany({
+      where: { id: { in: tagIds } },
+      select: { id: true },
+    });
+    if (validTags.length !== tagIds.length) {
+      throw new BadRequestException('Some tag IDs are invalid');
+    }
+    return validTags.map((tag) => tag.id);
   }
 }
