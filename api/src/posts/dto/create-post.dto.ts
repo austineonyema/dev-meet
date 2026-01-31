@@ -21,6 +21,7 @@ export class CreatePostDto {
   content: string;
 
   @IsBoolean()
+  @IsOptional()
   published: boolean;
 
   @IsOptional()
