@@ -8,45 +8,54 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  name      String?
-  password  String
-  posts     Post[]
-  tags      Tag[]
-  comments  Comment[]
-  likes     Like[]
-  role      Role      @default(USER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String?
+  password String
+  role     Role    @default(USER)
+
+  //Relations
+  posts        Post[]
+  tags         Tag[]
+  comments     Comment[]
+  postLikes    PostLike[]
+  commentLikes CommentLike[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("users")
 }
 
 model Post {
-  id        String    @id @default(uuid())
+  id        String  @id @default(uuid())
   title     String
   content   String
-  published Boolean?  @default(false)
-  author    User?     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String?
-  Tags      Tag[]
-  comments  Comment[]
-  likes     Like[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  published Boolean @default(false)
+
+  //Relations
+  author   User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  tags     Tag[]      @relation("PostTags") //many-to-many <->
+  comments Comment[]
+  likes    PostLike[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([updatedAt, authorId])
   @@map("posts")
 }
 
 model Tag {
-  id        String   @id() @default(uuid())
-  name      String   @unique()
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
-  post      Post?    @relation(fields: [postId], references: [id])
-  postId    String?
+  id   String @id() @default(uuid())
+  name String @unique()
+
+  //Relations
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  posts    Post[] @relation("PostTags") //many-to-many <->
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -55,31 +64,52 @@ model Tag {
 }
 
 model Comment {
-  id        String   @id() @default(uuid())
-  comment   String   @unique()
-  type      Type     @default(comment)
-  likes     Like[]
-  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String?
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String?
-  createdAt DateTime @default(now())
+  id      String @id() @default(uuid())
+  comment String
+  type    Type   @default(comment)
 
-  @@index([createdAt, type])
+  //Relations
+  author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  post     Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String
+  likes    CommentLike[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId, authorId])
   @@map("comments")
 }
 
-model Like {
-  id        String   @id @default(uuid())
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
-  post      Post?    @relation(fields: [postId], references: [id])
-  postId    String?
-  comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId String?
+model PostLike {
+  id String @id @default(uuid())
+
+  //Relations
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String
+
   createdAt DateTime @default(now())
 
-  @@map("likes")
+  @@unique([authorId, postId]) //this prevents duplicate post likes
+  @@map("post_likes")
+}
+
+model CommentLike {
+  id String @id @default(uuid())
+
+  //RElations
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([authorId, commentId]) // this prevents duplicate comment likes
+  @@map("comment_likes")
 }
 
 enum Role {

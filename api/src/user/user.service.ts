@@ -100,7 +100,7 @@ export class UserService {
     return userExists;
   }
 
-  private async getWithPosts(id: string): Promise<User> {
+  async getWithPosts(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {

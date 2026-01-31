@@ -21,6 +21,8 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Role } from '@prisma/client';
 import { Roles } from 'src/commons/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { CurrentUser } from 'src/commons/decorators/current-user';
+import type { AuthUser } from 'src/auth/types/auth-request';
 
 @Controller('user')
 //@UseGuards(JwtAuthGuard)
@@ -44,6 +46,12 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   fetch(@Query('email') email: string) {
     return this.userService.findByEmail(email);
+  }
+
+  @Get('allposts')
+  @UseGuards(JwtAuthGuard)
+  getUserPosts(@CurrentUser() user: AuthUser) {
+    return this.userService.getWithPosts(user.userId);
   }
 
   @Get(':id')
