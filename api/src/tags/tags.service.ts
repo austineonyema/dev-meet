@@ -3,37 +3,40 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Tag } from '@prisma/client';
+import { tagInclude, TagWithRelations } from 'src/types/tag-with-relation';
 
 @Injectable()
 export class TagsService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(authorId: string, createTagDto: CreateTagDto): Promise<CreateTagDto> {
-    const tag = await this.prismaService.tag.create({
+  async create(authorId: string, createTagDto: CreateTagDto): Promise<TagWithRelations> {
+    return await this.prismaService.tag.create({
       data: {
         ...createTagDto,
         authorId,
       },
+      include: tagInclude,
     });
-    return tag;
   }
 
-  async findAll(): Promise<Tag[]> {
-    const tags = await this.prismaService.tag.findMany();
-    return tags;
+  async findAll(): Promise<TagWithRelations[]> {
+    return await this.prismaService.tag.findMany({
+      include: tagInclude,
+    });
   }
 
-  async findOne(id: string): Promise<Tag> {
+  async findOne(id: string): Promise<TagWithRelations> {
     const tag = await this.prismaService.tag.findUnique({
       where: {
         id,
       },
+      include: tagInclude,
     });
     if (!tag) throw new NotFoundException(`tag with id: ${id} not found`);
     return tag;
   }
 
-  async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
+  async update(id: string, updateTagDto: UpdateTagDto): Promise<TagWithRelations> {
     await this.findOne(id);
     const updated = await this.prismaService.tag.update({
       where: {
@@ -42,6 +45,7 @@ export class TagsService {
       data: {
         ...updateTagDto,
       },
+      include: tagInclude,
     });
     return updated;
   }

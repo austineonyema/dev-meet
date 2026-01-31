@@ -3,10 +3,10 @@ import { Post, Tag, User } from '@prisma/client';
 // Only the fields we expose
 export type SafeUser = Omit<User, 'password'>;
 /**
- * Relations to include whenever a Post is returned.
+ * Relations to include whenever a tag is returned.
  * Centralizing this prevents duplication and keeps queries consistent.
  */
-export const postInclude = {
+export const tagInclude = {
   author: {
     select: {
       id: true,
@@ -17,13 +17,13 @@ export const postInclude = {
       updatedAt: true,
     },
   },
-  tags: true,
+  posts: true,
 } as const;
 
 /**
  * Type representing a Post with its commonly loaded relations.
  */
-export type PostWithRelations = Post & {
+export type TagWithRelations = Tag & {
   author: SafeUser;
-  tags: Tag[];
+  posts: Post[];
 };

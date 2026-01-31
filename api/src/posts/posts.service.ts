@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Post } from '@prisma/client';
 import { postInclude, PostWithRelations } from 'src/types/post-with-relation';
 
 @Injectable()
@@ -113,7 +112,11 @@ export class PostsService {
     return post;
   }
 
-  async updateByUser(authorId: string, id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+  async updateByUser(
+    authorId: string,
+    id: string,
+    updatePostDto: UpdatePostDto,
+  ): Promise<PostWithRelations> {
     await this.findOneByUser(authorId, id);
     const upDate = await this.prismaService.post.update({
       where: {
@@ -122,6 +125,7 @@ export class PostsService {
       data: {
         ...updatePostDto,
       },
+      include: postInclude,
     });
     return upDate;
   }
