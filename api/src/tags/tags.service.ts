@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { tagIncludeGlobal, TagWithRelations } from 'src/types/tag-with-relation';
+import { tagInclude, tagIncludeGlobal, TagWithRelations } from 'src/types/tag-with-relation';
 
 //TODO to remove unnecessary user controller
 @Injectable()
@@ -27,7 +27,7 @@ export class TagsService {
         ...createTagDto,
         authorId,
       },
-      include: tagIncludeGlobal,
+      include: tagInclude,
     });
   }
 
@@ -150,7 +150,7 @@ export class TagsService {
       where: {
         authorId,
       },
-      include: tagIncludeGlobal,
+      include: tagInclude,
     });
   }
 
@@ -171,7 +171,7 @@ export class TagsService {
         id,
         authorId,
       },
-      include: tagIncludeGlobal,
+      include: tagInclude,
     });
     if (!tag) throw new NotFoundException(`tag ${id} not found`);
     return tag;
@@ -205,7 +205,7 @@ export class TagsService {
       data: {
         ...updateTagDto,
       },
-      include: tagIncludeGlobal,
+      include: tagInclude,
     });
   }
 

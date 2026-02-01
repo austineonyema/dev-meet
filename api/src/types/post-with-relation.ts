@@ -4,16 +4,16 @@ import { Prisma } from '@prisma/client';
 // Relations to include whenever a Post is returned
 // ----------------------
 export const postInclude = {
-  author: {
-    select: {
-      // id: true,
-      // email: true,
-      name: true,
-      // role: true,
-      // createdAt: true,
-      // updatedAt: true,
-    },
-  },
+  // author: {
+  //   select: {
+  //     // id: true,
+  //     // email: true,
+  //     name: true,
+  //     // role: true,
+  //     // createdAt: true,
+  //     // updatedAt: true,
+  //   },
+  // },
   tags: true,
 } as const;
 
@@ -28,12 +28,12 @@ export type PostWithRelations = Prisma.PostGetPayload<{
 export const postIncludeGlobal = {
   author: {
     select: {
-      // id: true,
-      // email: true,
+      id: true,
+      email: true,
       name: true,
-      // role: true,
-      // createdAt: true,
-      // updatedAt: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
     },
   },
   tags: true,

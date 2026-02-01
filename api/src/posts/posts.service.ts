@@ -2,9 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { postIncludeGlobal, PostWithRelations } from 'src/types/post-with-relation';
+import { postInclude, postIncludeGlobal, PostWithRelations } from 'src/types/post-with-relation';
 
-//TODO - will seperate concerns in global and regular with relations across board
 @Injectable()
 export class PostsService {
   constructor(private prismaService: PrismaService) {}
@@ -36,7 +35,7 @@ export class PostsService {
             }
           : undefined,
       },
-      include: postIncludeGlobal,
+      include: postInclude,
     });
   }
 
@@ -128,7 +127,7 @@ export class PostsService {
       where: {
         authorId,
       },
-      include: postIncludeGlobal,
+      include: postInclude,
     });
   }
 
@@ -153,7 +152,7 @@ export class PostsService {
         id,
         authorId,
       },
-      include: postIncludeGlobal,
+      include: postInclude,
     });
     if (!post) throw new NotFoundException(`Post with id : ${id} not found`);
     return post;
@@ -188,7 +187,7 @@ export class PostsService {
       data: {
         ...updatePostDto,
       },
-      include: postIncludeGlobal,
+      include: postInclude,
     });
   }
 
