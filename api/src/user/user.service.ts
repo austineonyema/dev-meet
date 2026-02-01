@@ -92,13 +92,6 @@ export class UserService {
     });
     return;
   }
-  // ----------- internals -------------------
-  private async getId(id: string): Promise<boolean> {
-    const userExists = (await this.prisma.user.count({ where: { id: id } })) > 0;
-
-    if (!userExists) throw new NotFoundException(`User with id: ${id} Not Found`);
-    return userExists;
-  }
 
   async getWithPosts(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
@@ -116,6 +109,14 @@ export class UserService {
     });
     if (!user) throw new NotFoundException(`User with id: ${id} Not Found`);
     return user;
+  }
+
+  // ----------- internals -------------------
+  private async getId(id: string): Promise<boolean> {
+    const userExists = (await this.prisma.user.count({ where: { id: id } })) > 0;
+
+    if (!userExists) throw new NotFoundException(`User with id: ${id} Not Found`);
+    return userExists;
   }
 
   private async getUser(id: string): Promise<User> {

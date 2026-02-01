@@ -9,7 +9,6 @@ import {
   HttpCode,
   HttpStatus,
   ParseUUIDPipe,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -40,12 +39,6 @@ export class UserController {
   @Roles(Role.USER)
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
-  }
-
-  @Get('fetch')
-  @UseGuards(JwtAuthGuard)
-  fetch(@Query('email') email: string) {
-    return this.userService.findByEmail(email);
   }
 
   @Get('allposts')
