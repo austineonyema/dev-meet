@@ -36,7 +36,7 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN)
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
