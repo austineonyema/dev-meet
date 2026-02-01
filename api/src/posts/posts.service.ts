@@ -4,6 +4,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { postIncludeGlobal, PostWithRelations } from 'src/types/post-with-relation';
 
+//TODO - will seperate concerns in global and regular with relations across board
 @Injectable()
 export class PostsService {
   constructor(private prismaService: PrismaService) {}
@@ -88,7 +89,6 @@ export class PostsService {
    * with its related data specified in the `postInclude` variable.
    */
   async update(id: string, updatePostDto: UpdatePostDto): Promise<PostWithRelations> {
-    await this.ensurePostExists(id);
     return this.prismaService.post.update({
       where: {
         id,
@@ -106,7 +106,6 @@ export class PostsService {
    * post that needs to be removed.
    */
   async remove(id: string): Promise<void> {
-    await this.ensurePostExists(id);
     await this.prismaService.post.delete({
       where: {
         id,
@@ -182,7 +181,6 @@ export class PostsService {
     id: string,
     updatePostDto: UpdatePostDto,
   ): Promise<PostWithRelations> {
-    await this.findOneByUser(authorId, id);
     return await this.prismaService.post.update({
       where: {
         id,
@@ -203,7 +201,6 @@ export class PostsService {
    * @returns The `removeByUser` function is returning a Promise that resolves to `void`.
    */
   async removeByUser(authorId: string, id: string): Promise<void> {
-    await this.findOneByUser(authorId, id);
     await this.prismaService.post.delete({
       where: {
         id,
