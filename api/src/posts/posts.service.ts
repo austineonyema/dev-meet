@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { postInclude, PostWithRelations } from 'src/types/post-with-relation';
+import { postIncludeGlobal, PostWithRelations } from 'src/types/post-with-relation';
 
 @Injectable()
 export class PostsService {
@@ -35,7 +35,7 @@ export class PostsService {
             }
           : undefined,
       },
-      include: postInclude,
+      include: postIncludeGlobal,
     });
   }
 
@@ -49,7 +49,7 @@ export class PostsService {
    */
   async findAll(): Promise<PostWithRelations[]> {
     return this.prismaService.post.findMany({
-      include: postInclude,
+      include: postIncludeGlobal,
     });
   }
 
@@ -68,7 +68,7 @@ export class PostsService {
       where: {
         id,
       },
-      include: postInclude,
+      include: postIncludeGlobal,
     });
     if (!post) throw new NotFoundException(`Post with id : ${id} not found`);
     return post;
@@ -96,7 +96,7 @@ export class PostsService {
       data: {
         ...updatePostDto,
       },
-      include: postInclude,
+      include: postIncludeGlobal,
     });
   }
 
@@ -129,7 +129,7 @@ export class PostsService {
       where: {
         authorId,
       },
-      include: postInclude,
+      include: postIncludeGlobal,
     });
   }
 
@@ -154,7 +154,7 @@ export class PostsService {
         id,
         authorId,
       },
-      include: postInclude,
+      include: postIncludeGlobal,
     });
     if (!post) throw new NotFoundException(`Post with id : ${id} not found`);
     return post;
@@ -190,7 +190,7 @@ export class PostsService {
       data: {
         ...updatePostDto,
       },
-      include: postInclude,
+      include: postIncludeGlobal,
     });
   }
 
