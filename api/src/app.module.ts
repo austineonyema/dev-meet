@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProfilesModule } from './profiles/profiles.module';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PostsModule } from './posts/posts.module';
@@ -10,11 +9,9 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { TagsModule } from './tags/tags.module';
 import { CommentsModule } from './comments/comments.module';
-import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
-    ProfilesModule,
     ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     PrismaModule,
@@ -23,7 +20,6 @@ import { LikesModule } from './likes/likes.module';
     JwtModule,
     TagsModule,
     CommentsModule,
-    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
