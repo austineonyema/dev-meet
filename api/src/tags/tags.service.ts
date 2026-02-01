@@ -4,7 +4,6 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { tagInclude, tagIncludeGlobal, TagWithRelations } from 'src/types/tag-with-relation';
 
-//TODO to remove unnecessary user controller
 @Injectable()
 export class TagsService {
   constructor(private prismaService: PrismaService) {}
@@ -197,7 +196,7 @@ export class TagsService {
     id: string,
     updateTagDto: UpdateTagDto,
   ): Promise<TagWithRelations> {
-    // await this.findOneByUser(authorId, id);
+    await this.findOneByUser(authorId, id);
     return await this.prismaService.tag.update({
       where: {
         id,
@@ -219,6 +218,7 @@ export class TagsService {
    * @returns The `removeByUser` function is returning a Promise that resolves to `void`.
    */
   async removeByUser(authorId: string, id: string): Promise<void> {
+    await this.findOneByUser(authorId, id);
     await this.prismaService.tag.delete({
       where: {
         id,

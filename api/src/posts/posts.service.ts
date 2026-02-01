@@ -180,6 +180,7 @@ export class PostsService {
     id: string,
     updatePostDto: UpdatePostDto,
   ): Promise<PostWithRelations> {
+    await this.findOneByUser(authorId, id);
     return await this.prismaService.post.update({
       where: {
         id,
@@ -200,6 +201,7 @@ export class PostsService {
    * @returns The `removeByUser` function is returning a Promise that resolves to `void`.
    */
   async removeByUser(authorId: string, id: string): Promise<void> {
+    await this.findOneByUser(authorId, id);
     await this.prismaService.post.delete({
       where: {
         id,
