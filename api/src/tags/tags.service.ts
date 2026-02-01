@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { tagInclude, TagWithRelations } from 'src/types/tag-with-relation';
+import { tagInclude, tagIncludeGlobal, TagWithRelations } from 'src/types/tag-with-relation';
 
 //TODO to remove unnecessary user controller
 @Injectable()
@@ -72,7 +72,7 @@ export class TagsService {
    */
   async findAll(): Promise<TagWithRelations[]> {
     return await this.prismaService.tag.findMany({
-      include: tagInclude,
+      include: tagIncludeGlobal,
     });
   }
 

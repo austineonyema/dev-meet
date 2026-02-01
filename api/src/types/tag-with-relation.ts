@@ -9,18 +9,16 @@ export type TagWithRelations = Prisma.TagGetPayload<{
 }>;
 
 export const tagIncludeGlobal = {
-  // author:
-  // {
-  //   select: {
-  //     id: true,
-  //     email: true,
-  //     name: true,
-  //     role: true,
-  //     createdAt: true,
-  //     updatedAt: true,
-  //   },
-  //},
-  author: true,
+  author: {
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
   posts: true,
 } as const;
 
