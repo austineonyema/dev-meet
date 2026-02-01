@@ -25,7 +25,7 @@ import { CurrentUser } from 'src/commons/decorators/current-user';
 import type { AuthUser } from 'src/auth/types/auth-request';
 
 @Controller('user')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
