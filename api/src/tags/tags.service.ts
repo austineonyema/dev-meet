@@ -4,6 +4,7 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { tagInclude, TagWithRelations } from 'src/types/tag-with-relation';
 
+//TODO to remove unnecessary user controller
 @Injectable()
 export class TagsService {
   constructor(private prismaService: PrismaService) {}
@@ -25,6 +26,36 @@ export class TagsService {
       data: {
         ...createTagDto,
         authorId,
+      },
+      include: tagInclude,
+    });
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                ADMINISTRATOR POST                           */
+  /* -------------------------------------------------------------------------- */
+  /**
+   * This TypeScript function creates a new tag with associated posts for a specific author.
+   * @param {string} authorId - The `authorId` parameter is a string that represents the ID of the
+   * author who is creating the tag.
+   * @param {CreateTagDto} createTagDto - The `createTagDto` parameter is an object that contains data
+   * for creating a new tag. It may include properties such as `name`, `description`, and `postIds`
+   * which are the IDs of the posts associated with the tag.
+   * @returns The function `createWithPosts` returns a Promise that resolves to a `TagWithRelations`
+   * object. This object includes information about the newly created tag along with its relations,
+   * such as posts connected to the tag.
+   */
+  async createWithPosts(authorId: string, createTagDto: CreateTagDto): Promise<TagWithRelations> {
+    const validPostIds = await this.validatePosts(createTagDto.postIds);
+    return await this.prismaService.tag.create({
+      data: {
+        ...createTagDto,
+        authorId,
+        posts: validPostIds.length
+          ? {
+              connect: validPostIds.map((id) => ({ id })),
+            }
+          : undefined,
       },
       include: tagInclude,
     });
@@ -76,7 +107,6 @@ export class TagsService {
    * `TagWithRelations` object after updating the tag with the provided `id` and `updateTagDto` data.
    */
   async update(id: string, updateTagDto: UpdateTagDto): Promise<TagWithRelations> {
-    await this.ensureTagExists(id);
     return await this.prismaService.tag.update({
       where: {
         id,
@@ -95,7 +125,6 @@ export class TagsService {
    * tag that needs to be removed.
    */
   async remove(id: string): Promise<void> {
-    await this.ensureTagExists(id);
     await this.prismaService.tag.delete({
       where: {
         id,
@@ -137,7 +166,7 @@ export class TagsService {
    * object.
    */
   async findOneByUser(authorId: string, id: string): Promise<TagWithRelations> {
-    const tag = await this.prismaService.tag.findUnique({
+    const tag = await this.prismaService.tag.findFirst({
       where: {
         id,
         authorId,
@@ -168,11 +197,10 @@ export class TagsService {
     id: string,
     updateTagDto: UpdateTagDto,
   ): Promise<TagWithRelations> {
-    await this.findOneByUser(authorId, id);
+    // await this.findOneByUser(authorId, id);
     return await this.prismaService.tag.update({
       where: {
         id,
-        authorId,
       },
       data: {
         ...updateTagDto,
@@ -191,11 +219,9 @@ export class TagsService {
    * @returns The `removeByUser` function is returning a Promise that resolves to `void`.
    */
   async removeByUser(authorId: string, id: string): Promise<void> {
-    await this.findOneByUser(authorId, id);
     await this.prismaService.tag.delete({
       where: {
         id,
-        authorId,
       },
     });
     return;

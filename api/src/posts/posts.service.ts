@@ -6,12 +6,6 @@ import { postInclude, PostWithRelations } from 'src/types/post-with-relation';
 
 @Injectable()
 export class PostsService {
-  /**
-   * Creates an instance of PostsService.
-   *
-   * @constructor
-   * @param {PrismaService} prismaService
-   */
   constructor(private prismaService: PrismaService) {}
 
   /**
