@@ -9,18 +9,29 @@ import {
   HttpCode,
   HttpStatus,
   ParseUUIDPipe,
+  Post,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import type { UUID } from 'crypto';
-
-//TODO : to add admin role protection
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/commons/decorators/roles.decorator';
+import { CreatePostDto } from './dto/create-post.dto';
+import { CurrentUser } from 'src/commons/decorators/current-user';
+import type { AuthUser } from 'src/auth/types/auth-request';
 
 @Controller('posts')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@CurrentUser() user: AuthUser, @Body() createPostDto: CreatePostDto) {
+    return this.postsService.create(user.userId, createPostDto);
+  }
 
   @Get()
   findAll() {

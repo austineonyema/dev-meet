@@ -18,19 +18,21 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import type { AuthUser } from 'src/auth/types/auth-request';
 import { CurrentUser } from 'src/commons/decorators/current-user';
 import { CreateTagDto } from './dto/create-tag.dto';
-
-//TODO : to add admin role protection
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/commons/decorators/roles.decorator';
 
 @Controller('tags')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@CurrentUser() user: AuthUser, @Body() createTagDto: CreateTagDto) {
-    return this.tagsService.create(user.userId, createTagDto);
+    return this.tagsService.createWithPosts(user.userId, createTagDto);
   }
+
   @Get()
   findAll() {
     return this.tagsService.findAll();
@@ -47,6 +49,7 @@ export class TagsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: UUID) {
     return this.tagsService.remove(id);
   }

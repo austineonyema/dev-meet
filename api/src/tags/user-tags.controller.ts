@@ -50,6 +50,7 @@ export class UserTagsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   removeByUser(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: UUID) {
     return this.tagsService.removeByUser(user.userId, id);
   }

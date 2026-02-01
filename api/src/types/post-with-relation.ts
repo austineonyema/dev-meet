@@ -1,8 +1,5 @@
 import { Prisma } from '@prisma/client';
 
-// ----------------------
-// Relations to include whenever a Post is returned
-// ----------------------
 export const postInclude = {
   // author: {
   //   select: {
@@ -21,10 +18,8 @@ export const postInclude = {
 export type PostWithRelations = Prisma.PostGetPayload<{
   include: typeof postInclude;
 }>;
-
-// ----------------------
 // For admin or global use, same include but could add more fields
-// ----------------------
+
 export const postIncludeGlobal = {
   author: {
     select: {
