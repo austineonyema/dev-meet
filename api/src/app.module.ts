@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { TagsModule } from './tags/tags.module';
 import { CommentsModule } from './comments/comments.module';
+import { PostlikeModule } from './postlike/postlike.module';
+import { CommentlikeModule } from './commentlike/commentlike.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { CommentsModule } from './comments/comments.module';
     JwtModule,
     TagsModule,
     CommentsModule,
+    PostlikeModule,
+    CommentlikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
