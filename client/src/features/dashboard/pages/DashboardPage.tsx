@@ -15,6 +15,7 @@ import { activityFeed } from "../../../data/feed";
 import { mockUser } from "../../../data/user";
 
 export default function DashboardPage() {
+  console.log(localStorage.getItem("token"));
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Header Info */}

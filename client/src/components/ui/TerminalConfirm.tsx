@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Terminal, X, AlertTriangle } from "lucide-react";
 import { Button } from "./Button";
 
@@ -22,12 +22,12 @@ export function TerminalConfirm({
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setInputValue("");
-      setError(false);
-    }
-  }, [isOpen]);
+  // useEffect(() => {
+  //   if (!isOpen) {
+  //     setInputValue("");
+  //     setError(false);
+  //   }
+  // }, [isOpen]);
 
   if (!isOpen) return null;
 

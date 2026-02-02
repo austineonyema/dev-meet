@@ -1,19 +1,38 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Lock, Mail } from "lucide-react";
 import { Button, Input } from "../../../components/ui";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "../../../schema/login.schema";
+import { useLogin } from "../../../hooks/useLogin";
+import { setAuthToken } from "../../../lib/api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    navigate("/dashboard");
+  const { mutate, isPending } = useLogin();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+  const onSubmit = (data: LoginFormData) => {
+    mutate(data, {
+      onSuccess: (res) => {
+        localStorage.setItem("token", res.accessToken);
+        const token = localStorage.getItem("token");
+        if (token) setAuthToken(token);
+
+        navigate("/dashboard");
+      },
+      onError: () => {
+        //TODO will redefine this to make it more user friendly
+        alert("Invalid credentials");
+        console.log(errors);
+      },
+    });
   };
 
   return (
@@ -27,7 +46,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-4">
           <div className="relative group">
             <div className="absolute left-3 top-3 text-text-muted group-focus-within:text-terminal transition-colors">
@@ -35,10 +54,14 @@ export default function LoginPage() {
             </div>
             <Input
               type="email"
+              {...register("email")}
               placeholder="user@dev-meet.com"
               className="pl-10 font-mono text-sm bg-surface-950/50"
               required
             />
+            {errors.email && (
+              <p className="text-error text-xs">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="relative group">
@@ -47,10 +70,14 @@ export default function LoginPage() {
             </div>
             <Input
               type="password"
+              {...register("password")}
               placeholder="••••••••••••"
               className="pl-10 font-mono text-sm bg-surface-950/50"
               required
             />
+            {errors.password && (
+              <p className="text-error text-xs">{errors.password.message}</p>
+            )}
           </div>
         </div>
 
@@ -72,10 +99,10 @@ export default function LoginPage() {
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="w-full bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold h-11"
         >
-          {isLoading ? (
+          {isPending ? (
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-surface-950 animate-bounce" />
               <span className="w-2 h-2 rounded-full bg-surface-950 animate-bounce [animation-delay:-0.15s]" />

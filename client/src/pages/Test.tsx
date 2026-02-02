@@ -1,4 +1,4 @@
-import { useUsers } from "../features/users/useUsers";
+import { useUsers } from "../hooks/useUsers";
 
 export default function Test() {
   const { data: users = [], isLoading, isError, error } = useUsers();
