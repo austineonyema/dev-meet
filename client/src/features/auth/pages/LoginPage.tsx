@@ -6,10 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "../../../schema/login.schema";
 import { useLogin } from "../../../hooks/useLogin";
 import { setAuthToken } from "../../../lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useLogin();
   const {
     register,
@@ -21,16 +22,20 @@ export default function LoginPage() {
   const onSubmit = (data: LoginFormData) => {
     mutate(data, {
       onSuccess: (res) => {
+        //store access token
         localStorage.setItem("token", res.accessToken);
-        const token = localStorage.getItem("token");
-        if (token) setAuthToken(token);
-
+        //set authtoken- same function invoked on app startup
+        setAuthToken(res.accessToken);
+        //store user in global cache
+        queryClient.setQueryData(["me"], res.user);
+        //invalidate queries for the user
+        queryClient.invalidateQueries({ queryKey: ["me"] });
+        //navigate to dashboard upon success
         navigate("/dashboard");
       },
       onError: () => {
-        //TODO will redefine this to make it more user friendly
         alert("Invalid credentials");
-        console.log(errors);
+        // console.log(errors);
       },
     });
   };

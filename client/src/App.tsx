@@ -12,14 +12,10 @@ import Test from "./pages/Test";
 import { usePageTitle } from "./hooks/usePageTitle";
 
 import SettingsPage from "./features/settings/pages/SettingsPage";
-import { setAuthToken } from "./lib/api";
 
 function App() {
   usePageTitle();
-  const token = localStorage.getItem("token");
-  if (token) {
-    setAuthToken(token);
-  }
+
   //on logout
   //   localStorage.removeItem("token");
   // setAuthToken(null);
