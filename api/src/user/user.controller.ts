@@ -41,6 +41,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getUser(@CurrentUser() user: AuthUser): Promise<User> {
+    return this.userService.findOne(user.userId);
+  }
+
   @Get('allposts')
   @UseGuards(JwtAuthGuard)
   getUserPosts(@CurrentUser() user: AuthUser) {
