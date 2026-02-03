@@ -15,11 +15,6 @@ import { ProtectedRoute } from "./components/navigation/protectedRoutes";
 
 function App() {
   usePageTitle();
-
-  //on logout
-  //   localStorage.removeItem("token");
-  // setAuthToken(null);
-  // navigate("/login");
   return (
     <Routes>
       {/* Public Main Routes */}

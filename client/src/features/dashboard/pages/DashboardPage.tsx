@@ -14,11 +14,12 @@ import { Button, ScrollReveal } from "../../../components/ui";
 import { activityFeed } from "../../../data/feed";
 import { mockUser } from "../../../data/user";
 import { useQueryClient } from "@tanstack/react-query";
+import type { User } from "../../../../../shared/types/user";
 
 export default function DashboardPage() {
   const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["me"]);
-  console.log(user);
+  const user = queryClient.getQueryData<User>(["me"]);
+
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Header Info */}
@@ -26,7 +27,11 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">
             Welcome back,{" "}
-            <span className="text-terminal">{mockUser.name.split(" ")[0]}</span>
+            <span className="text-terminal capitalize">
+              {user?.name
+                ? user.name.split(" ")[0]
+                : mockUser.name.split(" ")[0]}
+            </span>
           </h1>
           <p className="text-text-secondary font-mono text-sm">
             <span className="text-terminal/60">$</span> last login: Wed Jan 28

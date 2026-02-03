@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Terminal,
@@ -15,10 +15,24 @@ import { useState } from "react";
 import { mockUser } from "../../data/user";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { CommandBar } from "../navigation/CommandBar";
+import { useQueryClient } from "@tanstack/react-query";
+import type { User as Auth } from "../../../../shared/types/user";
+import { setAuthToken } from "../../lib/api";
 
 export function DashboardLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setAuthToken(null);
+    queryClient.clear();
+    navigate("/login");
+  };
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData<Auth>(["me"]);
 
   const navItems = [
     {
@@ -117,7 +131,10 @@ export function DashboardLayout() {
             </Link>
           ))}
 
-          <button className="w-full flex items-center gap-3 p-3 rounded-lg text-error hover:bg-error/5 transition-all group border border-transparent">
+          <button
+            className="w-full flex items-center gap-3 p-3 rounded-lg text-error hover:bg-error/5 transition-all group border border-transparent"
+            onClick={handleLogout}
+          >
             <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
             {isSidebarOpen && (
               <span className="font-medium text-sm">Logout</span>
@@ -133,19 +150,21 @@ export function DashboardLayout() {
                 {mockUser.avatar ? (
                   <img
                     src={mockUser.avatar}
-                    alt={mockUser.name}
+                    alt={user?.name ? user.name : mockUser.name}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center font-mono text-terminal text-xs">
-                    {mockUser.name.charAt(0)}
+                  <div className="w-full h-full flex items-center justify-center font-mono text-terminal text-xs capitalize">
+                    {user?.name ? user.name.charAt(0) : mockUser.name.charAt(0)}
                   </div>
                 )}
               </div>
               <div className="flex-1 overflow-hidden">
-                <p className="text-xs font-bold truncate">{mockUser.name}</p>
+                <p className="text-xs font-bold truncate capitalize">
+                  {user?.name ? user.name : mockUser.name}
+                </p>
                 <p className="text-[10px] text-terminal font-mono truncate">
-                  @{mockUser.username}
+                  @{user?.email ?? mockUser.username}
                 </p>
               </div>
             </div>
