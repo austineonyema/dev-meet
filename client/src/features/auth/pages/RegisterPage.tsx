@@ -1,19 +1,46 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Lock, Mail, User, Code2 } from "lucide-react";
 import { Button, Input } from "../../../components/ui";
+import { useForm } from "react-hook-form";
+import {
+  registerSchema,
+  type RegisterFormData,
+} from "../../../schema/register.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRegister } from "../../../hooks/useRegister";
+import { setAuthToken } from "../../../lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate, isPending } = useRegister();
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    navigate("/dashboard");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  const onSubmit = (data: RegisterFormData) => {
+    mutate(data, {
+      onSuccess: (res) => {
+        // store token
+        localStorage.setItem("token", res.access_token);
+        //set auth token for
+        setAuthToken(res.access_token);
+        //store user in react query cache
+        queryClient.setQueryData(["me"], res.user);
+        //redirect to dashboard
+        navigate("/dashboard");
+      },
+      onError: (error) => {
+        console.log(error.message);
+        alert("invalid credentials!");
+      },
+    });
   };
 
   return (
@@ -27,7 +54,7 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="relative group">
@@ -35,20 +62,28 @@ export default function RegisterPage() {
                 <User className="w-4 h-4" />
               </div>
               <Input
+                {...register("name")}
                 placeholder="Name"
                 className="pl-10 font-mono text-sm bg-surface-950/50"
                 required
               />
+              {errors.name && (
+                <p className="text-error text-xs">{errors.name.message}</p>
+              )}
             </div>
             <div className="relative group">
               <div className="absolute left-3 top-3 text-text-muted group-focus-within:text-terminal transition-colors">
                 <Code2 className="w-4 h-4" />
               </div>
               <Input
+                // {...register("username")}
                 placeholder="Username"
                 className="pl-10 font-mono text-sm bg-surface-950/50"
                 required
               />
+              {/* {errors.username && (
+                <p className="text-error text-xs">{errors.username.message}</p>
+              )} */}
             </div>
           </div>
 
@@ -58,10 +93,14 @@ export default function RegisterPage() {
             </div>
             <Input
               type="email"
+              {...register("email")}
               placeholder="user@example.com"
               className="pl-10 font-mono text-sm bg-surface-950/50"
               required
             />
+            {errors.email && (
+              <p className="text-error text-xs">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="relative group">
@@ -70,10 +109,14 @@ export default function RegisterPage() {
             </div>
             <Input
               type="password"
+              {...register("password")}
               placeholder="Create password"
               className="pl-10 font-mono text-sm bg-surface-950/50"
               required
             />
+            {errors.password && (
+              <p className="text-error text-xs">{errors.password.message}</p>
+            )}
           </div>
         </div>
 
@@ -93,10 +136,10 @@ export default function RegisterPage() {
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="w-full bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold h-11"
         >
-          {isLoading ? (
+          {isPending ? (
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-surface-950 animate-bounce" />
               <span className="w-2 h-2 rounded-full bg-surface-950 animate-bounce [animation-delay:-0.15s]" />
