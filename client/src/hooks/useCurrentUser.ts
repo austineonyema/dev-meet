@@ -11,4 +11,5 @@ export const useCurrentUser = () =>
     },
     retry: false,
     enabled: !!localStorage.getItem("token"),
+    staleTime: 1000 * 60 * 5,
   });

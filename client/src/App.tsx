@@ -12,7 +12,7 @@ import Test from "./pages/Test";
 import { usePageTitle } from "./hooks/usePageTitle";
 import SettingsPage from "./features/settings/pages/SettingsPage";
 import { ProtectedRoute } from "./components/navigation/protectedRoutes";
-//TODO
+
 function App() {
   usePageTitle();
   return (
