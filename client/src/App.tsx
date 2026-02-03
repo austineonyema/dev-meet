@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import LoginPage from "./features/auth/pages/LoginPage";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import DashboardPage from "./features/dashboard/pages/DashboardPage";
@@ -10,11 +10,15 @@ import { AuthLayout, Layout, DashboardLayout } from "./components/layout";
 import HomePage from "./pages/HomePage";
 import Test from "./pages/Test";
 import { usePageTitle } from "./hooks/usePageTitle";
-
 import SettingsPage from "./features/settings/pages/SettingsPage";
+import { useCurrentUser } from "./hooks/useCurrentUser";
+import { ProtectedRoute } from "./components/navigation/protectedRoutes";
 
 function App() {
   usePageTitle();
+  const { data: user, isLoading } = useCurrentUser();
+  // const {data: user, isLoading, isError} = useCurrentUser();
+  if (isLoading) return <div>Checking session...</div>;
 
   //on logout
   //   localStorage.removeItem("token");
@@ -35,23 +39,30 @@ function App() {
       </Route>
 
       {/* Auth Routes */}
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
+      {!user && (
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
+      )}
 
       {/* Dashboard Routes */}
-      <Route element={<DashboardLayout />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+      <Route element={<ProtectedRoute user={user} />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
 
-        <Route path="/posts">
-          <Route index element={<PostsPage />} />
-          <Route path="new" element={<PostEditor />} />
-          <Route path=":id" element={<PostDetailPage />} />
+          <Route path="/posts">
+            <Route index element={<PostsPage />} />
+            <Route path="new" element={<PostEditor />} />
+            <Route path=":id" element={<PostDetailPage />} />
+          </Route>
         </Route>
       </Route>
+
+      {/* Catch-all redirect */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
