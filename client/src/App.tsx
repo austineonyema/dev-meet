@@ -11,14 +11,10 @@ import HomePage from "./pages/HomePage";
 import Test from "./pages/Test";
 import { usePageTitle } from "./hooks/usePageTitle";
 import SettingsPage from "./features/settings/pages/SettingsPage";
-import { useCurrentUser } from "./hooks/useCurrentUser";
 import { ProtectedRoute } from "./components/navigation/protectedRoutes";
 
 function App() {
   usePageTitle();
-  const { data: user, isLoading } = useCurrentUser();
-  // const {data: user, isLoading, isError} = useCurrentUser();
-  if (isLoading) return <div>Checking session...</div>;
 
   //on logout
   //   localStorage.removeItem("token");
@@ -39,15 +35,13 @@ function App() {
       </Route>
 
       {/* Auth Routes */}
-      {!user && (
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Route>
-      )}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
 
       {/* Dashboard Routes */}
-      <Route element={<ProtectedRoute user={user} />}>
+      <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />

@@ -23,13 +23,11 @@ export default function LoginPage() {
     mutate(data, {
       onSuccess: (res) => {
         //store access token
-        localStorage.setItem("token", res.accessToken);
+        localStorage.setItem("token", res.access_token);
         //set authtoken- same function invoked on app startup
-        setAuthToken(res.accessToken);
+        setAuthToken(res.access_token);
         //store user in global cache
         queryClient.setQueryData(["me"], res.user);
-        //invalidate queries for the user
-        queryClient.invalidateQueries({ queryKey: ["me"] });
         //navigate to dashboard upon success
         navigate("/dashboard");
       },

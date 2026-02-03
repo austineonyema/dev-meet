@@ -13,9 +13,12 @@ import {
 import { Button, ScrollReveal } from "../../../components/ui";
 import { activityFeed } from "../../../data/feed";
 import { mockUser } from "../../../data/user";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function DashboardPage() {
-  console.log(localStorage.getItem("token"));
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["me"]);
+  console.log(user);
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Header Info */}
@@ -75,7 +78,7 @@ export default function DashboardPage() {
           },
         ].map((stat, i) => (
           <ScrollReveal key={stat.label} delay={i * 100} className="h-full">
-            <div className="terminal-box p-5 rounded-xl border-terminal/10 hover:border-terminal/30 transition-all hover:translate-y-[-2px] h-full flex flex-col justify-between">
+            <div className="terminal-box p-5 rounded-xl border-terminal/10 hover:border-terminal/30 transition-all hover:-translate-y-0.5 h-full flex flex-col justify-between">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-text-muted text-xs font-mono uppercase tracking-widest">
                   {stat.label}
@@ -154,7 +157,7 @@ export default function DashboardPage() {
                       </button>
                     </div>
 
-                    <div className="pl-0 sm:pl-[52px]">
+                    <div className="pl-0 sm:pl-13">
                       <p className="text-sm text-text-secondary leading-relaxed mb-4">
                         {activity.content ||
                           (activity.type === "connection"
