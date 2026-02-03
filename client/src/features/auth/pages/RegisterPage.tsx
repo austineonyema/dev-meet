@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "../../../hooks/useRegister";
 import { setAuthToken } from "../../../lib/api";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -37,8 +39,14 @@ export default function RegisterPage() {
         navigate("/dashboard");
       },
       onError: (error) => {
-        console.log(error.message);
-        alert("invalid credentials!");
+        if (axios.isAxiosError(error)) {
+          const message =
+            error.response?.data?.message ?? "Registration failed";
+          setError("email", { type: "server", message });
+          return;
+        }
+
+        setError("email", { type: "server", message: "Registration failed" });
       },
     });
   };
