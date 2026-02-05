@@ -8,6 +8,7 @@ const POSTS_KEY = "dev_meet_posts";
 // Helper to get posts from localStorage or fallback to mocks
 const getStoredPosts = (): Post[] => {
   const stored = localStorage.getItem(POSTS_KEY);
+  // localStorage.removeItem(POSTS_KEY);
   if (stored) return JSON.parse(stored);
   return mockPosts;
 };

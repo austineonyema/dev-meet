@@ -13,9 +13,13 @@ import { Button, ScrollReveal } from "../../../components/ui";
 
 import { usePosts } from "../hooks/usePosts";
 import { PostSkeleton } from "../../../components/ui";
-
+import { useQueryClient } from "@tanstack/react-query";
+import { usePosts as usePost } from "../../../hooks/usePosts";
 export default function PostsPage() {
   const { data: posts, isLoading } = usePosts();
+  const queryClient = useQueryClient();
+  const { data: post = [], isLoad, isError, error } = usePost();
+  console.log(post, typeof post.tag);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
@@ -113,15 +117,15 @@ export default function PostsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => <PostSkeleton key={i} />)
-        ) : filteredPosts.length > 0 ? (
-          filteredPosts.map((post, i) => (
+        ) : post.length > 0 ? (
+          post.map((post, i) => (
             <ScrollReveal key={post.id} delay={i * 100} distance={20}>
               <Link to={`/posts/${post.id}`} className="group block h-full">
                 <article className="terminal-box h-full rounded-xl border-terminal/10 p-6 flex flex-col hover:border-terminal/30 transition-all hover:-translate-y-1">
                   {/* Category & Date */}
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] font-mono text-terminal px-2 py-0.5 rounded border border-terminal/20 bg-terminal/5 uppercase tracking-widest">
-                      {post.category}
+                      {/* {post.category} */}
                     </span>
                     <span className="text-[10px] font-mono text-text-muted italic">
                       {new Date(post.createdAt).toLocaleDateString()}
@@ -133,13 +137,13 @@ export default function PostsPage() {
                     {post.title}
                   </h3>
                   <p className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2">
-                    {post.excerpt}
+                    {/* {post.excerpt} */}
                   </p>
 
                   <div className="mt-auto pt-4 border-t border-terminal/5">
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {post.tags.map((tag) => (
+                      {Array.from(post.tags).map((tag) => (
                         <span
                           key={tag}
                           className="flex items-center gap-1 text-[10px] font-mono text-text-muted group-hover:text-text-primary transition-colors"
