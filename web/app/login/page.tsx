@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Lock, Mail } from "lucide-react";
+import { ArrowRight, Check, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthLayout } from "@/components/layout/AuthLayout";
@@ -83,10 +83,14 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-between text-xs">
             <label className="flex items-center gap-2 cursor-pointer text-text-secondary hover:text-text-primary transition-colors">
-              <input
-                type="checkbox"
-                className="rounded border-terminal/20 bg-surface-950 text-terminal focus:ring-terminal/50"
-              />
+              <span className="relative inline-flex h-4 w-4 items-center justify-center">
+                <input
+                  type="checkbox"
+                  className="peer sr-only"
+                />
+                <span className="h-4 w-4 rounded border border-terminal/30 bg-surface-950 transition-colors peer-checked:border-terminal peer-checked:bg-terminal peer-focus-visible:ring-2 peer-focus-visible:ring-terminal/50" />
+                <Check className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100" />
+              </span>
               <span>Remember me</span>
             </label>
             <button
