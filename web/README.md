@@ -10,6 +10,7 @@ Required keys:
 
 - `BACKEND_API_URL`: backend base URL used by Next route handlers.
 - `NEXT_PUBLIC_WEB_API_BASE_URL`: browser-facing API base (default `/api`).
+- `NEXT_PUBLIC_UNAUTHORIZED_REDIRECT_PATH`: redirect path after forced logout (default `/login`).
 - `ACCESS_COOKIE_NAME`: httpOnly access-token cookie name.
 - `REFRESH_COOKIE_NAME`: httpOnly refresh-token cookie name.
 - `COOKIE_SAME_SITE`: `lax`, `strict`, or `none`.
