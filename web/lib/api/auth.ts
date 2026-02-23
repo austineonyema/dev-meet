@@ -16,8 +16,27 @@ export type LoginResponse = {
   user: AuthUser;
 };
 
+export type RegisterRequest = {
+  email: string;
+  name: string;
+  password: string;
+};
+
+export type RegisterResponse = {
+  user: AuthUser;
+  requiresLogin: boolean;
+  message?: string;
+};
+
 export function login(payload: LoginRequest) {
   return apiRequest<LoginResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function register(payload: RegisterRequest) {
+  return apiRequest<RegisterResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify(payload),
   });
