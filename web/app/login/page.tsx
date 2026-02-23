@@ -29,25 +29,25 @@ export default function LoginPage() {
     } catch (error) {
       setError("password", {
         type: "server",
-        message: getApiErrorMessage(error, "Invalid credentials"),
+        message: getApiErrorMessage(error, "Unable to sign in. Check your credentials."),
       });
     }
   };
 
   return (
     <AuthLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-text-primary mb-2">
-            Access Terminal
+          <h1 className="text-xl font-bold text-text-primary mb-1.5">
+            Sign In to Dev-Meet
           </h1>
           <p className="text-text-secondary text-sm">
-            Enter credentials to establish connection
+            Continue building with a focused network of developers and engineers.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          <div className="space-y-3">
             <div className="relative group">
               <div className="absolute left-3 top-3 text-text-muted group-focus-within:text-terminal transition-colors">
                 <Mail className="w-4 h-4" />
@@ -93,14 +93,14 @@ export default function LoginPage() {
               type="button"
               className="text-terminal/80 hover:text-terminal hover:underline transition-colors"
             >
-              Forgot password?
+              Reset password
             </button>
           </div>
 
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold h-11"
+            className="w-full bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold h-10.5"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -110,30 +110,30 @@ export default function LoginPage() {
               </span>
             ) : (
               <>
-                $ connect --secure
+                Enter Dev-Meet
                 <ArrowRight className="w-4 h-4 ml-2" />
               </>
             )}
           </Button>
         </form>
 
-        <div className="relative">
+        <div className="relative mt-1">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-terminal/10" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-surface-900 px-2 text-text-muted">
-              New Connection?
+              New to Dev-Meet?
             </span>
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center pt-0.5">
           <Link
             href="/register"
             className="text-sm font-mono text-terminal hover:text-terminal-dim hover:underline transition-all"
           >
-            ./initialize_new_user.sh
+            Create your profile
           </Link>
         </div>
       </div>

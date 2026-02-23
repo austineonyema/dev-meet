@@ -39,33 +39,33 @@ export default function RegisterPage() {
     } catch (error) {
       setError("email", {
         type: "server",
-        message: getApiErrorMessage(error, "Registration failed"),
+        message: getApiErrorMessage(error, "Unable to create your profile."),
       });
     }
   };
 
   return (
     <AuthLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-text-primary mb-2">
-            Initialize User
+          <h1 className="text-xl font-bold text-text-primary mb-1.5">
+            Create Your Dev-Meet Profile
           </h1>
-          <p className="text-text-secondary text-sm">
-            Create your developer profile to join the network
+          <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
+            Join a focused space built for software developers and engineers.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               <div className="relative group">
                 <div className="absolute left-3 top-3 text-text-muted group-focus-within:text-terminal transition-colors">
                   <User className="w-4 h-4" />
                 </div>
                 <Input
                   {...register("name")}
-                  placeholder="Name"
+                  placeholder="Full name"
                   className="pl-10 font-mono text-sm bg-surface-950/50"
                   required
                 />
@@ -78,9 +78,9 @@ export default function RegisterPage() {
                   <Code2 className="w-4 h-4" />
                 </div>
                 <Input
-                  placeholder="Username"
+                  {...register("username")}
+                  placeholder="Preferred handle (optional)"
                   className="pl-10 font-mono text-sm bg-surface-950/50"
-                  required
                 />
               </div>
             </div>
@@ -118,9 +118,9 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="text-xs text-text-muted">
+          <div className="text-[11px] text-text-muted leading-relaxed">
             <p>
-              By executing this init script, you agree to our{" "}
+              By creating an account, you agree to our{" "}
               <a href="#" className="text-terminal hover:underline">
                 Terms of Service
               </a>{" "}
@@ -135,7 +135,7 @@ export default function RegisterPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold h-11"
+            className="w-full bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold h-10.5"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -145,30 +145,30 @@ export default function RegisterPage() {
               </span>
             ) : (
               <>
-                $ npm install user
+                Create Profile
                 <ArrowRight className="w-4 h-4 ml-2" />
               </>
             )}
           </Button>
         </form>
 
-        <div className="relative">
+        <div className="relative mt-1">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-terminal/10" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-surface-900 px-2 text-text-muted">
-              Already initialized?
+              Already have an account?
             </span>
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center pt-0.5">
           <Link
             href="/login"
             className="text-sm font-mono text-terminal hover:text-terminal-dim hover:underline transition-all"
           >
-            ./login_session.sh
+            Sign in to Dev-Meet
           </Link>
         </div>
       </div>
