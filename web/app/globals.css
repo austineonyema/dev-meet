@@ -6,6 +6,9 @@
   --color-terminal: #00ff41;
   --color-terminal-dim: #00cc33;
   --color-terminal-glow: rgba(0, 255, 65, 0.15);
+  --color-terminal-action: #0d1610;
+  --color-terminal-action-hover: #152319;
+  --color-terminal-action-border: #1f3a2b;
 
   /* Primary colors - keeping purple as secondary */
   --color-primary-50: #f5f3ff;

@@ -174,7 +174,7 @@ export function PostDetailShell({ post }: PostDetailShellProps) {
       <footer className="flex flex-col items-center space-y-8">
         <div className="h-px w-full bg-linear-to-r from-transparent via-terminal/20 to-transparent" />
         <div className="flex items-center gap-6">
-          <Button className="bg-surface-900 border border-terminal/20 text-text-primary hover:border-terminal">
+          <Button className="bg-terminal-action border border-terminal-action-border text-text-primary hover:bg-terminal-action-hover hover:border-terminal/40 hover:text-terminal focus-visible:ring-terminal/40">
             <Share2 className="w-4 h-4 mr-2" /> Share Knowledge
           </Button>
           <Link href="/posts">
