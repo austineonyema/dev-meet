@@ -3,6 +3,7 @@ import { backendRequest } from "@/lib/bff/backend-client";
 import { toNextErrorResponse } from "@/lib/bff/to-next-error-response";
 import {
   normalizeTokenLoginResponse,
+  normalizeLoginResponseWithOptionalRefresh,
   type NormalizedTokenLoginResponse,
 } from "@/lib/auth/backend-auth-contract";
 import { setAuthCookies } from "@/lib/auth/session-cookies";
@@ -33,13 +34,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const raw = await backendRequest<unknown>("/auth/token/login", {
+    const raw = await backendRequest<unknown>("/auth/login", {
       method: "POST",
       body: JSON.stringify(payload),
     });
 
-    const result: NormalizedTokenLoginResponse | null =
+    const strictResult: NormalizedTokenLoginResponse | null =
       normalizeTokenLoginResponse(raw);
+    const result =
+      strictResult ?? normalizeLoginResponseWithOptionalRefresh(raw);
     if (!result) {
       return NextResponse.json(
         { message: "Backend auth response is invalid." },

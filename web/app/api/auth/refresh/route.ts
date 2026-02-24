@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const raw = await backendRequest<unknown>("/auth/token/refresh", {
+    const raw = await backendRequest<unknown>("/auth/refresh", {
       method: "POST",
       body: JSON.stringify({ refreshToken }),
     });

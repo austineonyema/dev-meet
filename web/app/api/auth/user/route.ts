@@ -28,7 +28,7 @@ async function fetchCurrentUser(accessToken: string) {
 }
 
 async function refreshTokens(refreshToken: string) {
-  const raw = await backendRequest<unknown>("/auth/token/refresh", {
+  const raw = await backendRequest<unknown>("/auth/refresh", {
     method: "POST",
     body: JSON.stringify({ refreshToken }),
   });

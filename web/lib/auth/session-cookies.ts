@@ -39,7 +39,7 @@ function getBaseCookieOptions() {
 
 export type AuthTokenPair = {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string | null;
 };
 
 export function setAuthCookies(response: NextResponse, tokens: AuthTokenPair) {
@@ -50,13 +50,20 @@ export function setAuthCookies(response: NextResponse, tokens: AuthTokenPair) {
     maxAge: parseMaxAgeSeconds("ACCESS_COOKIE_MAX_AGE_MS", 15 * 60 * 1000),
   });
 
-  response.cookies.set(REFRESH_COOKIE_NAME, tokens.refreshToken, {
-    ...baseOptions,
-    maxAge: parseMaxAgeSeconds(
-      "REFRESH_COOKIE_MAX_AGE_MS",
-      7 * 24 * 60 * 60 * 1000,
-    ),
-  });
+  if (tokens.refreshToken) {
+    response.cookies.set(REFRESH_COOKIE_NAME, tokens.refreshToken, {
+      ...baseOptions,
+      maxAge: parseMaxAgeSeconds(
+        "REFRESH_COOKIE_MAX_AGE_MS",
+        7 * 24 * 60 * 60 * 1000,
+      ),
+    });
+  } else {
+    response.cookies.set(REFRESH_COOKIE_NAME, "", {
+      ...baseOptions,
+      expires: new Date(0),
+    });
+  }
 }
 
 export function clearAuthCookies(response: NextResponse) {
