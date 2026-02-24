@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Check, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +12,7 @@ import { getApiErrorMessage, login } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     register,
     handleSubmit,
@@ -24,7 +25,12 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login(data);
-      router.push("/dashboard");
+      const redirectTarget = searchParams.get("next");
+      const safeTarget =
+        redirectTarget && redirectTarget.startsWith("/")
+          ? redirectTarget
+          : "/dashboard";
+      router.push(safeTarget);
       router.refresh();
     } catch (error) {
       setError("password", {
