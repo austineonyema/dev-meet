@@ -44,8 +44,12 @@ export function PostCard({ post, index }: PostCardProps) {
 
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded border border-terminal/10 bg-surface-800 text-text-muted flex items-center justify-center text-[9px] font-mono shrink-0">
-                  {post.author.username.slice(0, 2).toUpperCase()}
+                <div className="h-5 w-5 shrink-0 overflow-hidden rounded border border-terminal/10 bg-surface-800 sm:h-6 sm:w-6">
+                  <img
+                    src={post.author.avatar}
+                    alt={post.author.name}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <span className="text-[9px] sm:text-[10px] font-mono text-text-muted truncate">
                   @{post.author.username}

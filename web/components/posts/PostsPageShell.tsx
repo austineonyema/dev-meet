@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { mockPosts } from "@/lib/posts";
+import { useEffect, useMemo, useState } from "react";
+import type { Post } from "@/lib/posts";
+import { getCombinedPosts, getPostsUpdateEventName } from "@/lib/api/posts";
 import { PostsFilterBar } from "./PostsFilterBar";
 import { PostsFooter } from "./PostsFooter";
 import { PostsGrid } from "./PostsGrid";
@@ -10,11 +11,30 @@ import { PostsHeader } from "./PostsHeader";
 const categories = ["ALL", "KERNEL", "SUDO", "GIT", "FRONTEND", "NETWORKING"];
 
 export function PostsPageShell() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
+  useEffect(() => {
+    const hydratePosts = () => {
+      setPosts(getCombinedPosts());
+      setIsLoading(false);
+    };
+
+    hydratePosts();
+    const eventName = getPostsUpdateEventName();
+    window.addEventListener(eventName, hydratePosts);
+    window.addEventListener("storage", hydratePosts);
+
+    return () => {
+      window.removeEventListener(eventName, hydratePosts);
+      window.removeEventListener("storage", hydratePosts);
+    };
+  }, []);
+
   const filteredPosts = useMemo(() => {
-    return mockPosts.filter((post) => {
+    return posts.filter((post) => {
       const query = searchQuery.toLowerCase();
       const matchesSearch =
         post.title.toLowerCase().includes(query) ||
@@ -27,7 +47,7 @@ export function PostsPageShell() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [posts, searchQuery, selectedCategory]);
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -40,7 +60,7 @@ export function PostsPageShell() {
         onCategoryChange={setSelectedCategory}
       />
       <PostsGrid
-        isLoading={false}
+        isLoading={isLoading}
         posts={filteredPosts}
         onResetFilters={() => {
           setSearchQuery("");

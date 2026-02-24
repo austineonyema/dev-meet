@@ -96,8 +96,12 @@ export function PostDetailShell({ post }: PostDetailShellProps) {
 
           <div className="flex items-center justify-between p-4 rounded-xl bg-surface-900 border border-terminal/5">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg border border-terminal/20 p-1 bg-surface-800 text-text-muted flex items-center justify-center text-xs font-mono">
-                {post.author.username.slice(0, 2).toUpperCase()}
+              <div className="h-12 w-12 overflow-hidden rounded-lg border border-terminal/20 bg-surface-800 p-1">
+                <img
+                  src={post.author.avatar}
+                  alt={post.author.name}
+                  className="h-full w-full rounded object-cover"
+                />
               </div>
               <div>
                 <p className="text-sm font-bold text-text-primary">{post.author.name}</p>
