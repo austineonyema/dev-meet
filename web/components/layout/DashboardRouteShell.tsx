@@ -31,7 +31,29 @@ type SessionPreview = {
 };
 
 let cachedSessionUser: AuthUser | null = null;
-let cachedSessionResolved = false;
+let cachedSessionResolvedAt = 0;
+let lastSessionRevalidateAt = 0;
+
+const SESSION_CACHE_TTL_MS = 60 * 1000;
+const SESSION_REVALIDATE_MIN_INTERVAL_MS = 10 * 1000;
+const SESSION_REVALIDATE_INTERVAL_MS = 2 * 60 * 1000;
+
+function writeSessionCache(user: AuthUser) {
+  cachedSessionUser = user;
+  cachedSessionResolvedAt = Date.now();
+  lastSessionRevalidateAt = Date.now();
+}
+
+function clearSessionCache() {
+  cachedSessionUser = null;
+  cachedSessionResolvedAt = 0;
+  lastSessionRevalidateAt = 0;
+}
+
+function hasFreshSessionCache(): boolean {
+  if (!cachedSessionUser || !cachedSessionResolvedAt) return false;
+  return Date.now() - cachedSessionResolvedAt < SESSION_CACHE_TTL_MS;
+}
 
 const navItems = [
   { icon: LayoutDashboard, label: "Feed", path: "/dashboard", shortcut: "G F" },
@@ -65,12 +87,13 @@ function mapAuthUserToSessionPreview(user: AuthUser): SessionPreview {
 export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const hasCachedSession = Boolean(cachedSessionUser);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [sessionUser, setSessionUser] = useState<AuthUser | null>(cachedSessionUser);
   const [sessionState, setSessionState] = useState<
     "loading" | "ready" | "redirecting" | "error"
-  >(cachedSessionUser ? "ready" : "loading");
+  >(hasCachedSession ? "ready" : "loading");
   const [sessionError, setSessionError] = useState<string | null>(null);
   const [session, setSession] = useState<SessionPreview>(() =>
     cachedSessionUser
@@ -85,22 +108,20 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
   useEffect(() => {
     let isActive = true;
 
-    if (cachedSessionResolved && cachedSessionUser) {
-      setSessionState("ready");
-      setSessionUser(cachedSessionUser);
-      setSession(mapAuthUserToSessionPreview(cachedSessionUser));
-      setSessionError(null);
-      return () => {
-        isActive = false;
-      };
-    }
+    async function loadSessionPreview(options: { background: boolean }) {
+      const isThrottled =
+        Date.now() - lastSessionRevalidateAt < SESSION_REVALIDATE_MIN_INTERVAL_MS;
+      if (options.background && isThrottled) return;
+      lastSessionRevalidateAt = Date.now();
 
-    async function loadSessionPreview() {
+      if (!options.background && !cachedSessionUser) {
+        setSessionState("loading");
+      }
+
       try {
         const profile = await getCurrentUser();
         if (!isActive) return;
-        cachedSessionUser = profile;
-        cachedSessionResolved = true;
+        writeSessionCache(profile);
         setSessionUser(profile);
         setSession(mapAuthUserToSessionPreview(profile));
         setSessionError(null);
@@ -111,25 +132,26 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
           error !== null &&
           "status" in error &&
           typeof (error as { status?: unknown }).status === "number"
-            ? ((error as { status: number }).status ?? 0)
-            : 0;
+              ? ((error as { status: number }).status ?? 0)
+              : 0;
 
         if (status === 401 || status === 403) {
-          cachedSessionUser = null;
-          cachedSessionResolved = false;
+          clearSessionCache();
           if (isActive) setSessionState("redirecting");
           router.replace("/login");
           return;
         }
 
         if (isActive && cachedSessionUser) {
+          setSessionUser(cachedSessionUser);
+          setSession(mapAuthUserToSessionPreview(cachedSessionUser));
+          setSessionError(null);
           setSessionState("ready");
           return;
         }
 
         if (isActive) {
-          cachedSessionUser = null;
-          cachedSessionResolved = false;
+          clearSessionCache();
           setSessionError(
             getApiErrorMessage(
               error,
@@ -141,13 +163,44 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
       }
     }
 
-    if (!cachedSessionUser) {
-      setSessionState("loading");
+    if (cachedSessionUser) {
+      setSessionState("ready");
+      setSessionUser(cachedSessionUser);
+      setSession(mapAuthUserToSessionPreview(cachedSessionUser));
+      setSessionError(null);
     }
-    void loadSessionPreview();
+
+    const shouldRevalidateOnMount = !cachedSessionUser || !hasFreshSessionCache();
+    if (shouldRevalidateOnMount) {
+      void loadSessionPreview({ background: Boolean(cachedSessionUser) });
+    }
+
+    const revalidateInBackground = () => {
+      if (!cachedSessionUser) return;
+      void loadSessionPreview({ background: true });
+    };
+
+    const onWindowFocus = () => {
+      void revalidateInBackground();
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void revalidateInBackground();
+      }
+    };
+
+    window.addEventListener("focus", onWindowFocus);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    const intervalId = window.setInterval(() => {
+      void revalidateInBackground();
+    }, SESSION_REVALIDATE_INTERVAL_MS);
 
     return () => {
       isActive = false;
+      window.removeEventListener("focus", onWindowFocus);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.clearInterval(intervalId);
     };
   }, [router]);
 
@@ -209,8 +262,7 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
     try {
       await logout();
     } finally {
-      cachedSessionUser = null;
-      cachedSessionResolved = false;
+      clearSessionCache();
       router.push("/login");
       router.refresh();
     }
