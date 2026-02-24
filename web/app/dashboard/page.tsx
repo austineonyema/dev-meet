@@ -3,6 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getApiErrorMessage, getCurrentUser, logout, type AuthUser } from "@/lib/api";
+import { DashboardShell } from "@/components/dashboard";
+import { mockDashboardUser, type DashboardUser } from "@/lib/dashboard";
+
+function mapAuthUserToDashboardUser(user: AuthUser): DashboardUser {
+  const emailPrefix = user.email.split("@")[0] || "dev_user";
+
+  return {
+    ...mockDashboardUser,
+    id: user.id,
+    email: user.email,
+    name: user.name?.trim() || mockDashboardUser.name,
+    username: emailPrefix,
+  };
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -42,53 +56,45 @@ export default function DashboardPage() {
     }
   }
 
+  const dashboardUser = user
+    ? mapAuthUserToDashboardUser(user)
+    : mockDashboardUser;
+  const firstName = dashboardUser.name.split(" ")[0] || "Engineer";
+
   return (
-    <main style={{ maxWidth: 700, margin: "40px auto", padding: "0 16px" }}>
-      <h1>Dashboard</h1>
-      <p style={{ color: "#666" }}>
-        Session check is now done via `GET /api/auth/user`.
-      </p>
-
-      {isLoading ? <p>Loading session...</p> : null}
-
-      {!isLoading && user ? (
-        <section style={{ border: "1px solid #ddd", padding: 16, borderRadius: 8 }}>
-          <p>
-            <strong>ID:</strong> {user.id}
-          </p>
-          <p>
-            <strong>Email:</strong> {user.email}
-          </p>
-          <p>
-            <strong>Name:</strong> {user.name || "-"}
-          </p>
-          <p>
-            <strong>Role:</strong> {user.role || "-"}
-          </p>
-          <button
-            type="button"
-            onClick={onLogout}
-            disabled={isLoggingOut}
-            style={{ padding: 10, marginTop: 8 }}
-          >
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </button>
+    <main className="min-h-screen bg-surface-950 text-text-primary">
+      {isLoading ? (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="terminal-box rounded-xl p-6 font-mono text-sm text-text-muted">
+            Loading session...
+          </div>
         </section>
       ) : null}
 
       {!isLoading && !user ? (
-        <section style={{ border: "1px solid #fda29b", padding: 16, borderRadius: 8 }}>
-          <p style={{ color: "#b42318", margin: 0 }}>
-            {errorMessage || "No active session."}
-          </p>
-          <button
-            type="button"
-            onClick={() => router.push("/login")}
-            style={{ padding: 10, marginTop: 10 }}
-          >
-            Go to login
-          </button>
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="rounded-xl border border-error/40 bg-error/5 p-6">
+            <p className="text-error m-0">
+              {errorMessage || "No active session."}
+            </p>
+            <button
+              type="button"
+              onClick={() => router.push("/login")}
+              className="mt-4 px-3 py-2 text-sm rounded border border-error/40 text-error hover:bg-error/10 transition-colors"
+            >
+              Go to login
+            </button>
+          </div>
         </section>
+      ) : null}
+
+      {!isLoading && user ? (
+        <DashboardShell
+          user={dashboardUser}
+          firstName={firstName}
+          onLogout={onLogout}
+          isLoggingOut={isLoggingOut}
+        />
       ) : null}
     </main>
   );
