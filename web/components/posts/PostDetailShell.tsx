@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   Bookmark,
   Check,
+  ChevronRight,
   Clock,
   Copy,
   Hash,
@@ -16,6 +17,7 @@ import {
 import { Button, ScrollReveal } from "@/components/ui";
 import type { Post } from "@/lib/posts";
 import { MarkdownContent } from "./MarkdownContent";
+import { getCombinedPosts } from "@/lib/api/posts";
 
 type PostDetailShellProps = {
   post: Post;
@@ -24,6 +26,18 @@ type PostDetailShellProps = {
 export function PostDetailShell({ post }: PostDetailShellProps) {
   const [copied, setCopied] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
+
+  const nextPostId = useMemo(() => {
+    const posts = getCombinedPosts();
+    if (posts.length < 2) return null;
+
+    const currentIndex = posts.findIndex((candidate) => candidate.id === post.id);
+    if (currentIndex < 0) return posts[0]?.id ?? null;
+
+    const nextIndex = (currentIndex + 1) % posts.length;
+    if (posts[nextIndex]?.id === post.id) return null;
+    return posts[nextIndex]?.id ?? null;
+  }, [post.id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +55,22 @@ export function PostDetailShell({ post }: PostDetailShellProps) {
     await navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2000);
+  };
+
+  const sharePost = async () => {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({
+          title: post.title,
+          text: post.excerpt,
+          url: window.location.href,
+        });
+        return;
+      } catch {
+        // Fallback to clipboard when share dialog is cancelled or unavailable.
+      }
+    }
+    await copyToClipboard();
   };
 
   return (
@@ -154,14 +184,25 @@ export function PostDetailShell({ post }: PostDetailShellProps) {
       <footer className="flex flex-col items-center space-y-8">
         <div className="h-px w-full bg-linear-to-r from-transparent via-terminal/20 to-transparent" />
         <div className="flex items-center gap-6">
-          <Button className="bg-terminal-action border border-terminal-action-border text-text-primary hover:bg-terminal-action-hover hover:border-terminal/40 hover:text-terminal focus-visible:ring-terminal/40">
+          <Button
+            onClick={sharePost}
+            className="bg-terminal-action border border-terminal-action-border text-text-primary hover:bg-terminal-action-hover hover:border-terminal/40 hover:text-terminal focus-visible:ring-terminal/40"
+          >
             <Share2 className="w-4 h-4 mr-2" /> Share Knowledge
           </Button>
-          <Link href="/posts">
-            <Button className="bg-terminal text-surface-950 font-bold hover:bg-terminal-dim">
-              Back to Feed
-            </Button>
-          </Link>
+          {nextPostId ? (
+            <Link href={`/posts/${nextPostId}`}>
+              <Button className="bg-terminal text-surface-950 font-bold hover:bg-terminal-dim">
+                Next Article <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/posts">
+              <Button className="bg-terminal text-surface-950 font-bold hover:bg-terminal-dim">
+                Back to Feed
+              </Button>
+            </Link>
+          )}
         </div>
         <p className="text-[10px] font-mono text-text-muted opacity-40">SYSTEM_EXIT: 0x00000000</p>
       </footer>
