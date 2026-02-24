@@ -44,9 +44,9 @@ export default function SettingsPage() {
   const settingsUser = user ? mapAuthUserToSettingsUser(user) : mockSettingsUser;
 
   return (
-    <main className="min-h-screen bg-surface-950 text-text-primary">
+    <div className="text-text-primary">
       {isLoading ? (
-        <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="terminal-box rounded-xl p-6 font-mono text-sm text-text-muted">
             Loading settings...
           </div>
@@ -54,7 +54,7 @@ export default function SettingsPage() {
       ) : null}
 
       {!isLoading && !user ? (
-        <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="rounded-xl border border-error/40 bg-error/5 p-6">
             <p className="m-0 text-error">{errorMessage || "No active session."}</p>
             <button
@@ -69,6 +69,6 @@ export default function SettingsPage() {
       ) : null}
 
       {!isLoading && user ? <SettingsPageShell user={settingsUser} /> : null}
-    </main>
+    </div>
   );
 }

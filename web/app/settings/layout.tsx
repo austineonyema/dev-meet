@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { DashboardRouteShell } from "@/components/layout";
 
-type PostsLayoutProps = {
+type SettingsLayoutProps = {
   children: ReactNode;
 };
 
-export default function PostsLayout({ children }: PostsLayoutProps) {
+export default function SettingsLayout({ children }: SettingsLayoutProps) {
   return <DashboardRouteShell>{children}</DashboardRouteShell>;
 }

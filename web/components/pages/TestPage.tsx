@@ -40,9 +40,11 @@ export function TestPage() {
   return (
     <section className="mx-auto max-w-5xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <header className="space-y-1">
-        <h1 className="font-mono text-2xl font-bold text-text-primary">Users</h1>
+        <h1 className="font-mono text-2xl font-bold text-text-primary">
+          Users Directory
+        </h1>
         <p className="font-mono text-xs text-text-muted">
-          Diagnostics view for `GET /api/users`.
+          Team records proxied through `GET /api/users`.
         </p>
       </header>
 

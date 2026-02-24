@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { ScrollReveal } from "@/components/ui";
 
@@ -51,9 +52,12 @@ export function ProfileContributionCard({
             ))}
           </div>
           <span>More</span>
-          <button className="ml-auto flex items-center gap-1 transition-colors hover:text-terminal">
+          <Link
+            href="/posts"
+            className="ml-auto flex items-center gap-1 transition-colors hover:text-terminal"
+          >
             view data <ExternalLink className="h-3 w-3" />
-          </button>
+          </Link>
         </div>
       </div>
     </ScrollReveal>

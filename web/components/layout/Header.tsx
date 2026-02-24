@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Terminal, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 
 const navLinks = [
@@ -14,8 +14,30 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const isAuthenticated = false;
+  useEffect(() => {
+    let isActive = true;
+
+    async function resolveSession() {
+      try {
+        const response = await fetch("/api/auth/user", {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+        });
+        if (isActive) setIsAuthenticated(response.ok);
+      } catch {
+        if (isActive) setIsAuthenticated(false);
+      }
+    }
+
+    void resolveSession();
+
+    return () => {
+      isActive = false;
+    };
+  }, [pathname]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-[60] border-b border-terminal/20 bg-surface-950">
@@ -46,12 +68,26 @@ export function Header() {
 
           <div className="hidden md:flex items-center gap-3 font-mono text-sm">
             {isAuthenticated ? (
-              <Link
-                href="/dashboard"
-                className="text-text-secondary hover:text-terminal transition-colors"
-              >
-                ./dashboard
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-text-secondary hover:text-terminal transition-colors"
+                >
+                  ./dashboard
+                </Link>
+                <Link
+                  href="/connections"
+                  className="text-text-muted hover:text-text-primary transition-colors"
+                >
+                  ./connections
+                </Link>
+                <Link
+                  href="/profile"
+                  className="text-text-muted hover:text-text-primary transition-colors"
+                >
+                  ./profile
+                </Link>
+              </>
             ) : (
               <>
                 <Link
@@ -103,7 +139,7 @@ export function Header() {
               ))}
             </nav>
             <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-terminal/10 font-mono">
-              {!isAuthenticated && (
+              {!isAuthenticated ? (
                 <>
                   <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                     <button className="w-full text-left px-4 py-2.5 text-text-muted hover:text-text-primary transition-colors">
@@ -117,6 +153,30 @@ export function Header() {
                     >
                       $ init --register
                     </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-2.5 text-text-muted hover:text-text-primary transition-colors"
+                  >
+                    ./dashboard
+                  </Link>
+                  <Link
+                    href="/connections"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-2.5 text-text-muted hover:text-text-primary transition-colors"
+                  >
+                    ./connections
+                  </Link>
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-2.5 text-text-muted hover:text-text-primary transition-colors"
+                  >
+                    ./profile
                   </Link>
                 </>
               )}

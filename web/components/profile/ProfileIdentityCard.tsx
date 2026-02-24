@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Calendar, Github, Globe, Mail, MapPin, Terminal, Twitter } from "lucide-react";
 import { ScrollReveal } from "@/components/ui";
 import type { ProfileUser } from "@/lib/profile";
@@ -7,6 +8,12 @@ type ProfileIdentityCardProps = {
 };
 
 export function ProfileIdentityCard({ user }: ProfileIdentityCardProps) {
+  const socialLinks = [
+    { Icon: Github, href: "/posts", label: "Posts" },
+    { Icon: Twitter, href: "/connections", label: "Connections" },
+    { Icon: Globe, href: "/", label: "Home" },
+  ];
+
   return (
     <ScrollReveal>
       <div className="terminal-box space-y-6 rounded-xl border-terminal/10 p-6">
@@ -25,14 +32,14 @@ export function ProfileIdentityCard({ user }: ProfileIdentityCardProps) {
         </div>
 
         <div className="flex gap-4 pt-4">
-          {[Github, Twitter, Globe].map((Icon, index) => (
-            <a
-              key={index}
-              href="#"
+          {socialLinks.map(({ Icon, href, label }) => (
+            <Link
+              key={label}
+              href={href}
               className="rounded-lg border border-terminal/5 bg-surface-800 p-2 transition-all hover:border-terminal/20 hover:bg-terminal/10 hover:text-terminal"
             >
               <Icon className="h-4 w-4" />
-            </a>
+            </Link>
           ))}
         </div>
       </div>

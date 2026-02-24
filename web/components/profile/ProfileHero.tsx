@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Edit } from "lucide-react";
 import { Button } from "@/components/ui";
 import type { ProfileUser } from "@/lib/profile";
@@ -47,18 +48,22 @@ export function ProfileHero({ user }: ProfileHeroProps) {
         </div>
 
         <div className="mb-2 flex gap-3">
-          <Button
-            size="sm"
-            className="border border-terminal/10 bg-surface-800 font-mono text-text-primary hover:bg-surface-700"
-          >
-            <Edit className="mr-2 h-4 w-4" /> $ profile --edit
-          </Button>
-          <Button
-            size="sm"
-            className="bg-terminal font-mono font-bold text-surface-950 shadow-[0_0_15px_rgba(0,255,65,0.2)] hover:bg-terminal-dim"
-          >
-            Connect
-          </Button>
+          <Link href="/settings">
+            <Button
+              size="sm"
+              className="border border-terminal/10 bg-surface-800 font-mono text-text-primary hover:bg-surface-700"
+            >
+              <Edit className="mr-2 h-4 w-4" /> $ profile --edit
+            </Button>
+          </Link>
+          <Link href="/connections">
+            <Button
+              size="sm"
+              className="bg-terminal font-mono font-bold text-surface-950 shadow-[0_0_15px_rgba(0,255,65,0.2)] hover:bg-terminal-dim"
+            >
+              Connect
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

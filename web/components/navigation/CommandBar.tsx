@@ -9,6 +9,7 @@ import {
   User,
   Layout,
   Settings,
+  Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -20,7 +21,14 @@ export function CommandBar() {
 
   const commands = [
     { id: "home", label: "cd /home", icon: Layout, path: "/" },
+    { id: "dashboard", label: "cd /dashboard", icon: Terminal, path: "/dashboard" },
     { id: "hub", label: "cd /knowledge/hub", icon: Terminal, path: "/posts" },
+    {
+      id: "connections",
+      label: "cd /network/connections",
+      icon: Users,
+      path: "/connections",
+    },
     { id: "profile", label: "cd /user/profile", icon: User, path: "/profile" },
     {
       id: "settings",

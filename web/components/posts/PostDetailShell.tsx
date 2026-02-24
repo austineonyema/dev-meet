@@ -44,7 +44,7 @@ export function PostDetailShell({ post }: PostDetailShellProps) {
 
   return (
     <div className="max-w-4xl mx-auto pb-20 px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-      <div className="fixed top-14 left-0 w-full h-1 bg-surface-900 z-50">
+      <div className="fixed left-0 top-16 z-50 h-1 w-full bg-surface-900">
         <div
           className="h-full bg-terminal transition-all duration-150 shadow-[0_0_10px_#00ff41]"
           style={{ width: `${readingProgress}%` }}

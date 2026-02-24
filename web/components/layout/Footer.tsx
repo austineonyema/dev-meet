@@ -27,17 +27,17 @@ const footerLinks = {
     { label: "./login", href: "/login" },
   ],
   resources: [
-    { label: "docs", href: "#" },
-    { label: "api", href: "#" },
-    { label: "changelog", href: "#" },
+    { label: "terms", href: "/terms" },
+    { label: "privacy", href: "/privacy" },
+    { label: "connections", href: "/connections" },
   ],
 };
 
 const socialLinks = [
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: MediumIcon, href: "#", label: "Medium" },
-  { icon: GoogleIcon, href: "#", label: "Google" },
+  { icon: Github, href: "https://github.com", label: "GitHub" },
+  { icon: Twitter, href: "https://x.com", label: "Twitter" },
+  { icon: MediumIcon, href: "https://medium.com", label: "Medium" },
+  { icon: GoogleIcon, href: "https://google.com", label: "Google" },
 ];
 
 export function Footer() {
@@ -80,12 +80,12 @@ export function Footer() {
             <ul className="space-y-2 font-mono text-sm">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
-                  <a
+                  <Link
                     href={link.href}
                     className="text-text-muted hover:text-text-primary transition-colors"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -98,6 +98,8 @@ export function Footer() {
                 <a
                   key={link.label}
                   href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
                   className="p-2 text-text-muted hover:text-terminal transition-colors"
                   aria-label={link.label}
                 >

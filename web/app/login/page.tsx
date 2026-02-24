@@ -93,12 +93,12 @@ export default function LoginPage() {
               </span>
               <span>Remember me</span>
             </label>
-            <button
-              type="button"
+            <Link
+              href="/forgot-password"
               className="text-terminal/80 hover:text-terminal hover:underline transition-colors"
             >
               Reset password
-            </button>
+            </Link>
           </div>
 
           <Button

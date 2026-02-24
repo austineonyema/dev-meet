@@ -4,6 +4,7 @@ import {
   MessageCircle,
   Share2,
 } from "lucide-react";
+import Link from "next/link";
 import { Button, ScrollReveal } from "@/components/ui";
 import { activityFeed } from "@/lib/dashboard";
 
@@ -39,7 +40,15 @@ export function DashboardFeed({ currentUsername }: DashboardFeedProps) {
                 <div className="flex items-start justify-between gap-2 sm:gap-4 mb-4">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-surface-800 border border-terminal/20 overflow-hidden shrink-0 flex items-center justify-center text-terminal font-mono text-sm font-bold">
-                      {activity.user.name.charAt(0)}
+                      {activity.user.avatar ? (
+                        <img
+                          src={activity.user.avatar}
+                          alt={activity.user.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        activity.user.name.charAt(0)
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs sm:text-sm font-bold text-text-primary flex items-center gap-2 truncate">
@@ -55,9 +64,12 @@ export function DashboardFeed({ currentUsername }: DashboardFeedProps) {
                       </p>
                     </div>
                   </div>
-                  <button className="text-text-muted hover:text-terminal transition-colors shrink-0 p-1">
+                  <Link
+                    href="/posts"
+                    className="text-text-muted hover:text-terminal transition-colors shrink-0 p-1"
+                  >
                     <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
+                  </Link>
                 </div>
 
                 <div className="pl-0 sm:pl-13">
@@ -94,9 +106,11 @@ export function DashboardFeed({ currentUsername }: DashboardFeedProps) {
         ))}
       </div>
 
-      <Button className="w-full bg-surface-900 hover:bg-surface-800 text-text-muted font-mono text-xs border border-terminal/10 py-3 mt-4">
-        FETCH_MORE --limit 20
-      </Button>
+      <Link href="/posts" className="block">
+        <Button className="mt-4 w-full border border-terminal/10 bg-surface-900 py-3 font-mono text-xs text-text-muted hover:bg-surface-800">
+          FETCH_MORE --limit 20
+        </Button>
+      </Link>
     </div>
   );
 }

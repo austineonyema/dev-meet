@@ -25,12 +25,14 @@ export function DashboardHeader({
         </p>
       </div>
       <div className="flex gap-3">
-        <Button
-          size="sm"
-          className="bg-surface-800 hover:bg-surface-700 text-text-primary border-terminal/10 border font-mono text-xs"
-        >
-          <Clock className="w-3.5 h-3.5 mr-2" /> History
-        </Button>
+        <Link href="/posts">
+          <Button
+            size="sm"
+            className="bg-surface-800 hover:bg-surface-700 text-text-primary border-terminal/10 border font-mono text-xs"
+          >
+            <Clock className="w-3.5 h-3.5 mr-2" /> History
+          </Button>
+        </Link>
         <Link href="/posts/new">
           <Button
             size="sm"

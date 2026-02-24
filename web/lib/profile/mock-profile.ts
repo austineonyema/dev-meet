@@ -5,7 +5,7 @@ export const mockProfileUser: ProfileUser = {
   name: "Alex Rivera",
   username: "arivera_dev",
   email: "alex@dev-meet.com",
-  avatar: null,
+  avatar: "/assets/avatars/user-1.png",
   bio: "Full-stack engineer building the future of developer collaboration. Passionate about Rust, TypeScript, and Terminal UIs.",
   location: "San Francisco, CA",
   joined: "Jan 2024",
