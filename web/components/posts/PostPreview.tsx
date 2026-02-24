@@ -1,8 +1,70 @@
 "use client";
 
+import { Suspense, lazy, useMemo } from "react";
 import { Clock } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+// @ts-ignore
+import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+const FENCED_CODE_PATTERN = /(^|\n)```/;
+
+const SyntaxHighlighter = lazy(() =>
+  Promise.all([
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/prism-light"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/javascript"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/typescript"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/jsx"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/tsx"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/python"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/rust"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/php"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/bash"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/css"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/markdown"),
+    // @ts-ignore
+    import("react-syntax-highlighter/dist/esm/languages/prism/json"),
+  ]).then(
+    ([
+      { default: PrismLight },
+      js,
+      ts,
+      jsx,
+      tsx,
+      python,
+      rust,
+      php,
+      bash,
+      css,
+      markdownLang,
+      json,
+    ]) => {
+      PrismLight.registerLanguage("javascript", js.default);
+      PrismLight.registerLanguage("typescript", ts.default);
+      PrismLight.registerLanguage("jsx", jsx.default);
+      PrismLight.registerLanguage("tsx", tsx.default);
+      PrismLight.registerLanguage("python", python.default);
+      PrismLight.registerLanguage("rust", rust.default);
+      PrismLight.registerLanguage("php", php.default);
+      PrismLight.registerLanguage("bash", bash.default);
+      PrismLight.registerLanguage("css", css.default);
+      PrismLight.registerLanguage("markdown", markdownLang.default);
+      PrismLight.registerLanguage("json", json.default);
+      return { default: PrismLight };
+    },
+  ),
+);
 
 type PostPreviewProps = {
   title: string;
@@ -16,6 +78,10 @@ function estimateReadingTime(content: string): number {
 
 export function PostPreview({ title, content }: PostPreviewProps) {
   const readingTime = estimateReadingTime(content);
+  const hasFencedCode = useMemo(
+    () => FENCED_CODE_PATTERN.test(content),
+    [content],
+  );
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -84,22 +150,67 @@ export function PostPreview({ title, content }: PostPreviewProps) {
                     {children}
                   </a>
                 ),
-                pre: ({ children }) => (
-                  <pre className="my-5 overflow-x-auto rounded-xl border border-terminal/15 bg-surface-900 p-4">
-                    {children}
-                  </pre>
-                ),
-                code: ({ className, children }) => (
-                  <code
-                    className={
-                      className
-                        ? `font-mono text-sm text-text-primary ${className}`
-                        : "rounded bg-surface-900 px-1.5 py-0.5 font-mono text-[0.92em] text-terminal/90"
+                pre: ({ children }) => <>{children}</>,
+                code({
+                  node: _node,
+                  inline,
+                  className,
+                  children,
+                  ...props
+                }: any) {
+                  const match = /language-(\w+)/.exec(className || "");
+                  if (!inline && match) {
+                    if (!hasFencedCode) {
+                      return (
+                        <pre className="my-5 overflow-x-auto rounded-xl border border-terminal/15 bg-surface-900 p-4 font-mono text-sm text-text-primary">
+                          <code {...props}>{children}</code>
+                        </pre>
+                      );
                     }
-                  >
-                    {children}
-                  </code>
-                ),
+
+                    return (
+                      <div className="my-6 overflow-hidden rounded-xl border border-terminal/10 shadow-xl">
+                        <div className="flex items-center justify-between border-b border-terminal/10 bg-surface-800 px-4 py-2">
+                          <div className="flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-red-500/35" />
+                            <span className="h-2 w-2 rounded-full bg-yellow-500/35" />
+                            <span className="h-2 w-2 rounded-full bg-green-500/35" />
+                          </div>
+                          <span className="font-mono text-[10px] tracking-widest text-terminal/70 uppercase">
+                            {match[1]}
+                          </span>
+                        </div>
+                        <Suspense
+                          fallback={
+                            <div className="h-24 animate-pulse bg-surface-900" />
+                          }
+                        >
+                          <SyntaxHighlighter
+                            style={atomDark}
+                            language={match[1]}
+                            PreTag="div"
+                            customStyle={{
+                              margin: 0,
+                              background: "rgba(5, 5, 5, 0.9)",
+                              padding: "1.25rem",
+                              fontSize: "0.875rem",
+                              lineHeight: "1.6",
+                            }}
+                            {...props}
+                          >
+                            {String(children).replace(/\n$/, "")}
+                          </SyntaxHighlighter>
+                        </Suspense>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <code className="rounded bg-surface-900 px-1.5 py-0.5 font-mono text-[0.92em] text-terminal/90">
+                      {children}
+                    </code>
+                  );
+                },
                 hr: () => <hr className="my-8 border-terminal/15" />,
                 table: ({ children }) => (
                   <div className="my-6 overflow-x-auto rounded-lg border border-terminal/15">
