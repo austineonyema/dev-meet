@@ -19,7 +19,7 @@ export function ProfileContributionCard({
   contributionData,
 }: ProfileContributionCardProps) {
   return (
-    <ScrollReveal delay={300}>
+    <ScrollReveal delay={300} initiallyVisible>
       <div className="terminal-box overflow-hidden rounded-xl border-terminal/10 p-6">
         <h2 className="mb-6 flex items-center gap-2 font-mono text-lg font-bold">
           <div className="h-4 w-1.5 bg-terminal" />

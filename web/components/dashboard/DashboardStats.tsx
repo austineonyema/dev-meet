@@ -37,7 +37,12 @@ export function DashboardStats({ user }: DashboardStatsProps) {
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => (
-        <ScrollReveal key={stat.label} delay={index * 100} className="h-full">
+        <ScrollReveal
+          key={stat.label}
+          delay={index * 100}
+          className="h-full"
+          initiallyVisible
+        >
           <div className="terminal-box p-5 rounded-xl border-terminal/10 hover:border-terminal/30 transition-all hover:-translate-y-0.5 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
               <span className="text-text-muted text-xs font-mono uppercase tracking-widest">

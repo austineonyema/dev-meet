@@ -11,15 +11,14 @@ import { PostsHeader } from "./PostsHeader";
 const categories = ["ALL", "KERNEL", "SUDO", "GIT", "FRONTEND", "NETWORKING"];
 
 export function PostsPageShell() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>(() => getCombinedPosts());
+  const [isLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
   useEffect(() => {
     const hydratePosts = () => {
       setPosts(getCombinedPosts());
-      setIsLoading(false);
     };
 
     hydratePosts();

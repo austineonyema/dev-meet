@@ -30,6 +30,9 @@ type SessionPreview = {
   avatar: string | null;
 };
 
+let cachedSessionUser: AuthUser | null = null;
+let cachedSessionResolved = false;
+
 const navItems = [
   { icon: LayoutDashboard, label: "Feed", path: "/dashboard", shortcut: "G F" },
   { icon: MessageSquareCode, label: "Posts", path: "/posts", shortcut: "G P" },
@@ -64,24 +67,40 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [sessionUser, setSessionUser] = useState<AuthUser | null>(null);
+  const [sessionUser, setSessionUser] = useState<AuthUser | null>(cachedSessionUser);
   const [sessionState, setSessionState] = useState<
     "loading" | "ready" | "redirecting" | "error"
-  >("loading");
+  >(cachedSessionUser ? "ready" : "loading");
   const [sessionError, setSessionError] = useState<string | null>(null);
-  const [session, setSession] = useState<SessionPreview>({
-    name: mockDashboardUser.name,
-    email: mockDashboardUser.email,
-    avatar: mockDashboardUser.avatar ?? null,
-  });
+  const [session, setSession] = useState<SessionPreview>(() =>
+    cachedSessionUser
+      ? mapAuthUserToSessionPreview(cachedSessionUser)
+      : {
+          name: mockDashboardUser.name,
+          email: mockDashboardUser.email,
+          avatar: mockDashboardUser.avatar ?? null,
+        },
+  );
 
   useEffect(() => {
     let isActive = true;
+
+    if (cachedSessionResolved && cachedSessionUser) {
+      setSessionState("ready");
+      setSessionUser(cachedSessionUser);
+      setSession(mapAuthUserToSessionPreview(cachedSessionUser));
+      setSessionError(null);
+      return () => {
+        isActive = false;
+      };
+    }
 
     async function loadSessionPreview() {
       try {
         const profile = await getCurrentUser();
         if (!isActive) return;
+        cachedSessionUser = profile;
+        cachedSessionResolved = true;
         setSessionUser(profile);
         setSession(mapAuthUserToSessionPreview(profile));
         setSessionError(null);
@@ -96,12 +115,21 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
             : 0;
 
         if (status === 401 || status === 403) {
+          cachedSessionUser = null;
+          cachedSessionResolved = false;
           if (isActive) setSessionState("redirecting");
           router.replace("/login");
           return;
         }
 
+        if (isActive && cachedSessionUser) {
+          setSessionState("ready");
+          return;
+        }
+
         if (isActive) {
+          cachedSessionUser = null;
+          cachedSessionResolved = false;
           setSessionError(
             getApiErrorMessage(
               error,
@@ -113,7 +141,9 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
       }
     }
 
-    setSessionState("loading");
+    if (!cachedSessionUser) {
+      setSessionState("loading");
+    }
     void loadSessionPreview();
 
     return () => {
@@ -179,6 +209,8 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
     try {
       await logout();
     } finally {
+      cachedSessionUser = null;
+      cachedSessionResolved = false;
       router.push("/login");
       router.refresh();
     }

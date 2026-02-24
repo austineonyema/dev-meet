@@ -10,7 +10,7 @@ type PostCardProps = {
 
 export function PostCard({ post, index }: PostCardProps) {
   return (
-    <ScrollReveal delay={index * 100} distance={20}>
+    <ScrollReveal delay={index * 100} distance={20} initiallyVisible>
       <Link href={`/posts/${post.id}`} className="group block h-full">
         <article className="terminal-box h-full rounded-xl border-terminal/10 p-6 flex flex-col hover:border-terminal/30 transition-all hover:-translate-y-1">
           <div className="flex items-center justify-between mb-4">

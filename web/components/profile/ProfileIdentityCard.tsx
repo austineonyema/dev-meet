@@ -15,7 +15,7 @@ export function ProfileIdentityCard({ user }: ProfileIdentityCardProps) {
   ];
 
   return (
-    <ScrollReveal>
+    <ScrollReveal initiallyVisible>
       <div className="terminal-box space-y-6 rounded-xl border-terminal/10 p-6">
         <div className="space-y-4">
           <h3 className="mb-4 flex items-center justify-between border-b border-terminal/10 pb-2 font-mono text-xs font-bold tracking-widest text-terminal uppercase">

@@ -15,7 +15,7 @@ export function ProfileNetworkStatsCard({ user }: ProfileNetworkStatsCardProps) 
   ];
 
   return (
-    <ScrollReveal delay={200}>
+    <ScrollReveal delay={200} initiallyVisible>
       <div className="terminal-box rounded-xl border-terminal/10 p-6">
         <h3 className="mb-4 flex items-center justify-between font-mono text-xs font-bold tracking-widest text-text-muted uppercase">
           <span>Network_Stats</span>

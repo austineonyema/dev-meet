@@ -34,6 +34,7 @@ export function DashboardFeed({ currentUsername }: DashboardFeedProps) {
             delay={index * 150}
             direction="up"
             distance={20}
+            initiallyVisible
           >
             <div className="terminal-box rounded-xl border-terminal/10 overflow-hidden hover:border-terminal/20 transition-colors">
               <div className="p-4 sm:p-5">

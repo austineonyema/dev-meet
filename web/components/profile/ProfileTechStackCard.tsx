@@ -7,7 +7,7 @@ type ProfileTechStackCardProps = {
 
 export function ProfileTechStackCard({ user }: ProfileTechStackCardProps) {
   return (
-    <ScrollReveal delay={100}>
+    <ScrollReveal delay={100} initiallyVisible>
       <div className="terminal-box rounded-xl border-terminal/10 p-6">
         <h2 className="mb-6 flex items-center gap-2 font-mono text-lg font-bold">
           <div className="h-4 w-1.5 bg-terminal" />
