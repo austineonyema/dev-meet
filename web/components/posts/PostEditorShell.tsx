@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,8 +23,16 @@ import { getApiErrorMessage } from "@/lib/api";
 import { createPost } from "@/lib/api/posts";
 import { Button } from "@/components/ui";
 import { postSchema, type PostFormData } from "@/schema/post.schema";
-import { PostEditorInput } from "./PostEditorInput";
-import { PostPreview } from "./PostPreview";
+
+const PostEditorInput = lazy(async () => {
+  const module = await import("./PostEditorInput");
+  return { default: module.PostEditorInput };
+});
+
+const PostPreview = lazy(async () => {
+  const module = await import("./PostPreview");
+  return { default: module.PostPreview };
+});
 
 type LayoutMode = "side" | "stack" | "hidden";
 
@@ -329,22 +337,33 @@ export function PostEditorShell() {
             />
           </div>
 
-          <Controller
-            name="content"
-            control={control}
-            render={({ field }) => (
-              <div className="flex min-h-0 flex-1 flex-col">
-                <PostEditorInput content={field.value} setContent={field.onChange} />
-                {errors.content ? (
-                  <div className="border-t border-error/20 bg-error/10 p-2">
-                    <span className="font-mono text-[10px] tracking-widest text-error uppercase">
-                      {`ERR: ${errors.content.message}`}
-                    </span>
-                  </div>
-                ) : null}
+          <Suspense
+            fallback={
+              <div className="flex flex-1 items-center justify-center bg-surface-950 font-mono text-terminal/40">
+                {"< EDITOR_HYDRATING />"}
               </div>
-            )}
-          />
+            }
+          >
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <PostEditorInput
+                    content={field.value}
+                    setContent={field.onChange}
+                  />
+                  {errors.content ? (
+                    <div className="border-t border-error/20 bg-error/10 p-2">
+                      <span className="font-mono text-[10px] tracking-widest text-error uppercase">
+                        {`ERR: ${errors.content.message}`}
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            />
+          </Suspense>
         </div>
 
         <div
@@ -358,7 +377,15 @@ export function PostEditorShell() {
                   : "flex flex-1 overflow-y-auto border-t border-terminal/10"
           }`}
         >
-          <PostPreview title={title} content={content} />
+          <Suspense
+            fallback={
+              <div className="flex flex-1 items-center justify-center font-mono text-terminal/40">
+                {"< PREVIEW_ENGINE_LOADING />"}
+              </div>
+            }
+          >
+            <PostPreview title={title} content={content} />
+          </Suspense>
         </div>
       </div>
 
