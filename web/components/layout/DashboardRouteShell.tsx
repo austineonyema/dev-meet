@@ -18,6 +18,7 @@ import {
 import { getApiErrorMessage, getCurrentUser, logout, type AuthUser } from "@/lib/api";
 import { mockDashboardUser } from "@/lib/dashboard";
 import { DashboardSessionProvider } from "./dashboard-session";
+import { CommandBar } from "@/components/navigation/CommandBar";
 
 type DashboardRouteShellProps = {
   children: React.ReactNode;
@@ -185,6 +186,7 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
 
   return (
     <DashboardSessionProvider user={sessionUser}>
+      <CommandBar />
       <div className="flex h-screen overflow-hidden bg-surface-950 font-sans text-text-primary">
       <aside
         className={`${isSidebarOpen ? "w-64" : "w-16"} z-30 flex flex-col border-r border-terminal/10 bg-surface-900 transition-all duration-300`}
