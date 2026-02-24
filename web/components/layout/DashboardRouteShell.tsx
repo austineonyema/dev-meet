@@ -15,8 +15,9 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { getCurrentUser, logout, type AuthUser } from "@/lib/api";
+import { getApiErrorMessage, getCurrentUser, logout, type AuthUser } from "@/lib/api";
 import { mockDashboardUser } from "@/lib/dashboard";
+import { DashboardSessionProvider } from "./dashboard-session";
 
 type DashboardRouteShellProps = {
   children: React.ReactNode;
@@ -62,6 +63,11 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [sessionUser, setSessionUser] = useState<AuthUser | null>(null);
+  const [sessionState, setSessionState] = useState<
+    "loading" | "ready" | "redirecting" | "error"
+  >("loading");
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const [session, setSession] = useState<SessionPreview>({
     name: mockDashboardUser.name,
     email: mockDashboardUser.email,
@@ -74,24 +80,45 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
     async function loadSessionPreview() {
       try {
         const profile = await getCurrentUser();
-        if (isActive) setSession(mapAuthUserToSessionPreview(profile));
-      } catch {
+        if (!isActive) return;
+        setSessionUser(profile);
+        setSession(mapAuthUserToSessionPreview(profile));
+        setSessionError(null);
+        setSessionState("ready");
+      } catch (error) {
+        const status =
+          typeof error === "object" &&
+          error !== null &&
+          "status" in error &&
+          typeof (error as { status?: unknown }).status === "number"
+            ? ((error as { status: number }).status ?? 0)
+            : 0;
+
+        if (status === 401 || status === 403) {
+          if (isActive) setSessionState("redirecting");
+          router.replace("/login");
+          return;
+        }
+
         if (isActive) {
-          setSession({
-            name: mockDashboardUser.name,
-            email: mockDashboardUser.email,
-            avatar: mockDashboardUser.avatar ?? null,
-          });
+          setSessionError(
+            getApiErrorMessage(
+              error,
+              "Unable to resolve dashboard session. Please retry.",
+            ),
+          );
+          setSessionState("error");
         }
       }
     }
 
+    setSessionState("loading");
     void loadSessionPreview();
 
     return () => {
       isActive = false;
     };
-  }, [pathname]);
+  }, [router]);
 
   const pathnames = useMemo(
     () => pathname.split("/").filter(Boolean),
@@ -104,6 +131,48 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
     "_",
   );
 
+  if (sessionState === "loading" || sessionState === "redirecting") {
+    return (
+      <main className="min-h-screen bg-surface-950 px-4 py-8 text-text-primary sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-4xl">
+          <div className="terminal-box rounded-xl p-6 font-mono text-sm text-text-muted">
+            Resolving session...
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (sessionState === "error" || !sessionUser) {
+    return (
+      <main className="min-h-screen bg-surface-950 px-4 py-8 text-text-primary sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-4xl">
+          <div className="rounded-xl border border-error/40 bg-error/5 p-6">
+            <p className="m-0 text-error">
+              {sessionError || "Unable to resolve dashboard session."}
+            </p>
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="rounded border border-error/40 px-3 py-2 text-sm text-error transition-colors hover:bg-error/10"
+              >
+                Retry
+              </button>
+              <button
+                type="button"
+                onClick={() => router.replace("/login")}
+                className="rounded border border-terminal/30 px-3 py-2 text-sm text-text-primary transition-colors hover:bg-terminal/10"
+              >
+                Go to login
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   async function handleLogout() {
     setIsLoggingOut(true);
     try {
@@ -115,7 +184,8 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface-950 font-sans text-text-primary">
+    <DashboardSessionProvider user={sessionUser}>
+      <div className="flex h-screen overflow-hidden bg-surface-950 font-sans text-text-primary">
       <aside
         className={`${isSidebarOpen ? "w-64" : "w-16"} z-30 flex flex-col border-r border-terminal/10 bg-surface-900 transition-all duration-300`}
       >
@@ -340,6 +410,7 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
           </div>
         </main>
       </div>
-    </div>
+      </div>
+    </DashboardSessionProvider>
   );
 }

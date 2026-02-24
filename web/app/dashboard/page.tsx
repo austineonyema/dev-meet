@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getApiErrorMessage, getCurrentUser, logout, type AuthUser } from "@/lib/api";
+import { useState } from "react";
+import { logout, type AuthUser } from "@/lib/api";
 import { DashboardShell } from "@/components/dashboard";
+import { useDashboardSession } from "@/components/layout";
 import { mockDashboardUser, type DashboardUser } from "@/lib/dashboard";
 
 function mapAuthUserToDashboardUser(user: AuthUser): DashboardUser {
@@ -20,31 +21,8 @@ function mapAuthUserToDashboardUser(user: AuthUser): DashboardUser {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { user } = useDashboardSession();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadSession() {
-      try {
-        const profile = await getCurrentUser();
-        if (isActive) setUser(profile);
-      } catch (error) {
-        if (isActive) setErrorMessage(getApiErrorMessage(error, "Unauthorized."));
-      } finally {
-        if (isActive) setIsLoading(false);
-      }
-    }
-
-    void loadSession();
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
 
   async function onLogout() {
     setIsLoggingOut(true);
@@ -56,46 +34,17 @@ export default function DashboardPage() {
     }
   }
 
-  const dashboardUser = user
-    ? mapAuthUserToDashboardUser(user)
-    : mockDashboardUser;
+  const dashboardUser = mapAuthUserToDashboardUser(user);
   const firstName = dashboardUser.name.split(" ")[0] || "Engineer";
 
   return (
     <div className="text-text-primary">
-      {isLoading ? (
-        <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="terminal-box rounded-xl p-6 font-mono text-sm text-text-muted">
-            Loading session...
-          </div>
-        </section>
-      ) : null}
-
-      {!isLoading && !user ? (
-        <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="rounded-xl border border-error/40 bg-error/5 p-6">
-            <p className="text-error m-0">
-              {errorMessage || "No active session."}
-            </p>
-            <button
-              type="button"
-              onClick={() => router.push("/login")}
-              className="mt-4 px-3 py-2 text-sm rounded border border-error/40 text-error hover:bg-error/10 transition-colors"
-            >
-              Go to login
-            </button>
-          </div>
-        </section>
-      ) : null}
-
-      {!isLoading && user ? (
-        <DashboardShell
-          user={dashboardUser}
-          firstName={firstName}
-          onLogout={onLogout}
-          isLoggingOut={isLoggingOut}
-        />
-      ) : null}
+      <DashboardShell
+        user={dashboardUser}
+        firstName={firstName}
+        onLogout={onLogout}
+        isLoggingOut={isLoggingOut}
+      />
     </div>
   );
 }

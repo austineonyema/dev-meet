@@ -3,3 +3,4 @@ export * from "./Header";
 export * from "./Layout";
 export * from "./AuthLayout";
 export * from "./DashboardRouteShell";
+export * from "./dashboard-session";
