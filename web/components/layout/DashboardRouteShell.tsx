@@ -15,13 +15,14 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { getApiErrorMessage, getCurrentUser, logout, type AuthUser } from "@/lib/api";
+import { getCurrentUser, logout, type AuthUser } from "@/lib/api";
 import { mockDashboardUser } from "@/lib/dashboard";
 import { DashboardSessionProvider } from "./dashboard-session";
 import { CommandBar } from "@/components/navigation/CommandBar";
 
 type DashboardRouteShellProps = {
   children: React.ReactNode;
+  currentUser: AuthUser;
 };
 
 type SessionPreview = {
@@ -30,30 +31,8 @@ type SessionPreview = {
   avatar: string | null;
 };
 
-let cachedSessionUser: AuthUser | null = null;
-let cachedSessionResolvedAt = 0;
-let lastSessionRevalidateAt = 0;
-
-const SESSION_CACHE_TTL_MS = 60 * 1000;
 const SESSION_REVALIDATE_MIN_INTERVAL_MS = 10 * 1000;
 const SESSION_REVALIDATE_INTERVAL_MS = 2 * 60 * 1000;
-
-function writeSessionCache(user: AuthUser) {
-  cachedSessionUser = user;
-  cachedSessionResolvedAt = Date.now();
-  lastSessionRevalidateAt = Date.now();
-}
-
-function clearSessionCache() {
-  cachedSessionUser = null;
-  cachedSessionResolvedAt = 0;
-  lastSessionRevalidateAt = 0;
-}
-
-function hasFreshSessionCache(): boolean {
-  if (!cachedSessionUser || !cachedSessionResolvedAt) return false;
-  return Date.now() - cachedSessionResolvedAt < SESSION_CACHE_TTL_MS;
-}
 
 const navItems = [
   { icon: LayoutDashboard, label: "Feed", path: "/dashboard", shortcut: "G F" },
@@ -84,116 +63,65 @@ function mapAuthUserToSessionPreview(user: AuthUser): SessionPreview {
   };
 }
 
-export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
+function getErrorStatus(error: unknown): number {
+  if (!error || typeof error !== "object") return 0;
+  if (!("status" in error)) return 0;
+  const status = (error as { status?: unknown }).status;
+  return typeof status === "number" ? status : 0;
+}
+
+export function DashboardRouteShell({
+  children,
+  currentUser,
+}: DashboardRouteShellProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const hasCachedSession = Boolean(cachedSessionUser);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [sessionUser, setSessionUser] = useState<AuthUser | null>(cachedSessionUser);
-  const [sessionState, setSessionState] = useState<
-    "loading" | "ready" | "redirecting" | "error"
-  >(hasCachedSession ? "ready" : "loading");
-  const [sessionError, setSessionError] = useState<string | null>(null);
-  const [session, setSession] = useState<SessionPreview>(() =>
-    cachedSessionUser
-      ? mapAuthUserToSessionPreview(cachedSessionUser)
-      : {
-          name: mockDashboardUser.name,
-          email: mockDashboardUser.email,
-          avatar: mockDashboardUser.avatar ?? null,
-        },
-  );
+  const [sessionUser, setSessionUser] = useState<AuthUser>(currentUser);
+
+  useEffect(() => {
+    setSessionUser(currentUser);
+  }, [currentUser]);
 
   useEffect(() => {
     let isActive = true;
+    let lastRevalidateAt = 0;
 
-    async function loadSessionPreview(options: { background: boolean }) {
-      const isThrottled =
-        Date.now() - lastSessionRevalidateAt < SESSION_REVALIDATE_MIN_INTERVAL_MS;
-      if (options.background && isThrottled) return;
-      lastSessionRevalidateAt = Date.now();
-
-      if (!options.background && !cachedSessionUser) {
-        setSessionState("loading");
+    async function revalidateSession(force = false) {
+      const now = Date.now();
+      if (!force && now - lastRevalidateAt < SESSION_REVALIDATE_MIN_INTERVAL_MS) {
+        return;
       }
+      lastRevalidateAt = now;
 
       try {
         const profile = await getCurrentUser();
         if (!isActive) return;
-        writeSessionCache(profile);
         setSessionUser(profile);
-        setSession(mapAuthUserToSessionPreview(profile));
-        setSessionError(null);
-        setSessionState("ready");
       } catch (error) {
-        const status =
-          typeof error === "object" &&
-          error !== null &&
-          "status" in error &&
-          typeof (error as { status?: unknown }).status === "number"
-              ? ((error as { status: number }).status ?? 0)
-              : 0;
-
+        const status = getErrorStatus(error);
         if (status === 401 || status === 403) {
-          clearSessionCache();
-          if (isActive) setSessionState("redirecting");
           router.replace("/login");
-          return;
-        }
-
-        if (isActive && cachedSessionUser) {
-          setSessionUser(cachedSessionUser);
-          setSession(mapAuthUserToSessionPreview(cachedSessionUser));
-          setSessionError(null);
-          setSessionState("ready");
-          return;
-        }
-
-        if (isActive) {
-          clearSessionCache();
-          setSessionError(
-            getApiErrorMessage(
-              error,
-              "Unable to resolve dashboard session. Please retry.",
-            ),
-          );
-          setSessionState("error");
         }
       }
     }
 
-    if (cachedSessionUser) {
-      setSessionState("ready");
-      setSessionUser(cachedSessionUser);
-      setSession(mapAuthUserToSessionPreview(cachedSessionUser));
-      setSessionError(null);
-    }
-
-    const shouldRevalidateOnMount = !cachedSessionUser || !hasFreshSessionCache();
-    if (shouldRevalidateOnMount) {
-      void loadSessionPreview({ background: Boolean(cachedSessionUser) });
-    }
-
-    const revalidateInBackground = () => {
-      if (!cachedSessionUser) return;
-      void loadSessionPreview({ background: true });
-    };
-
     const onWindowFocus = () => {
-      void revalidateInBackground();
+      void revalidateSession();
     };
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        void revalidateInBackground();
+        void revalidateSession();
       }
     };
 
     window.addEventListener("focus", onWindowFocus);
     document.addEventListener("visibilitychange", onVisibilityChange);
+    void revalidateSession(true);
     const intervalId = window.setInterval(() => {
-      void revalidateInBackground();
+      void revalidateSession();
     }, SESSION_REVALIDATE_INTERVAL_MS);
 
     return () => {
@@ -209,60 +137,18 @@ export function DashboardRouteShell({ children }: DashboardRouteShellProps) {
     [pathname],
   );
 
+  const session = mapAuthUserToSessionPreview(sessionUser);
   const firstName = session.name.split(" ")[0] || "Dev";
   const username = (session.email.split("@")[0] || "engineer").replace(
     /\s+/g,
     "_",
   );
 
-  if (sessionState === "loading" || sessionState === "redirecting") {
-    return (
-      <main className="min-h-screen bg-surface-950 px-4 py-8 text-text-primary sm:px-6 lg:px-8">
-        <section className="mx-auto max-w-4xl">
-          <div className="terminal-box rounded-xl p-6 font-mono text-sm text-text-muted">
-            Resolving session...
-          </div>
-        </section>
-      </main>
-    );
-  }
-
-  if (sessionState === "error" || !sessionUser) {
-    return (
-      <main className="min-h-screen bg-surface-950 px-4 py-8 text-text-primary sm:px-6 lg:px-8">
-        <section className="mx-auto max-w-4xl">
-          <div className="rounded-xl border border-error/40 bg-error/5 p-6">
-            <p className="m-0 text-error">
-              {sessionError || "Unable to resolve dashboard session."}
-            </p>
-            <div className="mt-4 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="rounded border border-error/40 px-3 py-2 text-sm text-error transition-colors hover:bg-error/10"
-              >
-                Retry
-              </button>
-              <button
-                type="button"
-                onClick={() => router.replace("/login")}
-                className="rounded border border-terminal/30 px-3 py-2 text-sm text-text-primary transition-colors hover:bg-terminal/10"
-              >
-                Go to login
-              </button>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
-  }
-
   async function handleLogout() {
     setIsLoggingOut(true);
     try {
       await logout();
     } finally {
-      clearSessionCache();
       router.push("/login");
       router.refresh();
     }
