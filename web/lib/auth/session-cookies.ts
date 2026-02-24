@@ -58,7 +58,7 @@ export function setAuthCookies(response: NextResponse, tokens: AuthTokenPair) {
         7 * 24 * 60 * 60 * 1000,
       ),
     });
-  } else {
+  } else if (REFRESH_COOKIE_NAME !== ACCESS_COOKIE_NAME) {
     response.cookies.set(REFRESH_COOKIE_NAME, "", {
       ...baseOptions,
       expires: new Date(0),
