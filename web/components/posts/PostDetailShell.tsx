@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button, ScrollReveal } from "@/components/ui";
 import type { Post } from "@/lib/posts";
+import { MarkdownContent } from "./MarkdownContent";
 
 type PostDetailShellProps = {
   post: Post;
@@ -130,33 +131,8 @@ export function PostDetailShell({ post }: PostDetailShellProps) {
             <p className="text-xl text-text-secondary leading-relaxed italic">{post.excerpt}</p>
           </div>
 
-          <div className="mt-12 space-y-8 text-lg leading-relaxed text-text-secondary">
-            {post.content.split("\n\n").map((block, index) => (
-              <div key={`${post.id}-${index}`}>
-                {block.startsWith("#") ? (
-                  <h2 className="text-2xl font-bold text-text-primary mt-12 mb-6 flex items-center gap-3">
-                    <span className="text-terminal">##</span>
-                    {block.replace(/#/g, "").trim()}
-                  </h2>
-                ) : block.startsWith("```") ? (
-                  <div className="my-8 rounded-xl bg-surface-900 border border-terminal/10 overflow-hidden font-mono text-sm">
-                    <div className="px-4 py-2 border-b border-terminal/5 flex items-center justify-between bg-surface-800/50">
-                      <span className="text-[10px] text-text-muted">POST_SNIPPET.c</span>
-                      <button className="text-text-muted hover:text-terminal">
-                        <Copy className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <pre className="p-6 overflow-x-auto">
-                      <code className="text-terminal-dim">
-                        {block.replace(/```[a-z]*/g, "").trim()}
-                      </code>
-                    </pre>
-                  </div>
-                ) : (
-                  <p>{block}</p>
-                )}
-              </div>
-            ))}
+          <div className="mt-12">
+            <MarkdownContent content={post.content} className="text-lg leading-relaxed" />
           </div>
 
           <div className="mt-20 pt-10 border-t border-terminal/10">
