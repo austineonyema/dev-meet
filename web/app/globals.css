@@ -224,4 +224,29 @@
   .scrollbar-stable {
     scrollbar-gutter: stable;
   }
+
+  .post-editor-input .cm-editor {
+    height: 100%;
+    background: transparent;
+  }
+
+  .post-editor-input .cm-scroller {
+    font-family: var(--font-mono);
+    line-height: 1.75rem;
+  }
+
+  .post-editor-input .cm-content {
+    min-height: 420px;
+    padding: 0 1.5rem 2rem;
+    caret-color: var(--color-terminal);
+  }
+
+  .post-editor-input .cm-lineNumbers {
+    color: color-mix(in srgb, var(--color-text-muted) 65%, transparent);
+  }
+
+  .post-editor-input .cm-gutters {
+    border-right: 1px solid color-mix(in srgb, var(--color-terminal) 12%, transparent);
+    background: color-mix(in srgb, var(--color-surface-900) 70%, transparent);
+  }
 }

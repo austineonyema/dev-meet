@@ -1,18 +1,53 @@
 "use client";
 
+import { useMemo } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
+import { javascript } from "@codemirror/lang-javascript";
+import { LanguageDescription } from "@codemirror/language";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { placeholder } from "@codemirror/view";
+
 type PostEditorInputProps = {
   content: string;
   setContent: (value: string) => void;
 };
 
 export function PostEditorInput({ content, setContent }: PostEditorInputProps) {
+  const cmExtensions = useMemo(
+    () => [
+      markdown({
+        base: markdownLanguage,
+        codeLanguages: [
+          LanguageDescription.of({
+            name: "javascript",
+            alias: ["js", "jsx"],
+            support: javascript(),
+          }),
+        ],
+      }),
+      oneDark,
+      placeholder("your post goes here..."),
+    ],
+    [],
+  );
+
   return (
-    <div className="flex-1 overflow-auto">
-      <textarea
+    <div className="post-editor-input flex-1 overflow-auto">
+      <CodeMirror
         value={content}
-        onChange={(event) => setContent(event.target.value)}
-        placeholder="your post goes here..."
-        className="h-full min-h-[420px] w-full resize-none bg-transparent px-6 pb-8 font-mono text-sm leading-7 text-text-primary outline-none placeholder:text-text-muted/40"
+        height="100%"
+        theme={oneDark}
+        extensions={cmExtensions}
+        onChange={(value: string) => setContent(value)}
+        className="h-full font-mono text-sm"
+        basicSetup={{
+          lineNumbers: true,
+          foldGutter: true,
+          dropCursor: true,
+          allowMultipleSelections: true,
+          indentOnInput: true,
+        }}
       />
     </div>
   );
