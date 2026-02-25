@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: dev-meet-api
+    runtime: node
+    rootDir: api
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:render
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  - type: web
+    name: dev-meet-web
+    runtime: node
+    rootDir: web
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:render
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BACKEND_API_URL
+        value: https://dev-meet-api.onrender.com/api/v1
