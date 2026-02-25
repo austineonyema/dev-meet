@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
-import type { AuthUser } from "@/lib/api";
+import type { AuthUser } from "@/lib/auth/auth-models";
 import {
   ACCESS_COOKIE_NAME,
   REFRESH_COOKIE_NAME,

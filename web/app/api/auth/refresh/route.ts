@@ -10,6 +10,7 @@ import {
   REFRESH_COOKIE_NAME,
   setAuthCookies,
 } from "@/lib/auth/session-cookies";
+import type { LoginResponse } from "@/lib/auth/auth-models";
 
 function unauthorizedWithClearedCookies(message: string) {
   const response = NextResponse.json({ message }, { status: 401 });
@@ -38,7 +39,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = NextResponse.json({ user: result.user }, { status: 200 });
+    const response = NextResponse.json<LoginResponse>(
+      { user: result.user },
+      { status: 200 },
+    );
     setAuthCookies(response, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,

@@ -3,23 +3,15 @@ import { backendRequest } from "@/lib/bff/backend-client";
 import { toNextErrorResponse } from "@/lib/bff/to-next-error-response";
 import {
   normalizeTokenLoginResponse,
-  type AuthUser,
 } from "@/lib/auth/backend-auth-contract";
 import { setAuthCookies } from "@/lib/auth/session-cookies";
+import type {
+  AuthUser,
+  RegisterRequest,
+  RegisterResponse,
+} from "@/lib/auth/auth-models";
 
-type RegisterPayload = {
-  email: string;
-  name: string;
-  password: string;
-};
-
-type RegisterResponse = {
-  user: AuthUser;
-  requiresLogin: boolean;
-  message?: string;
-};
-
-function isRegisterPayload(payload: unknown): payload is RegisterPayload {
+function isRegisterPayload(payload: unknown): payload is RegisterRequest {
   if (!payload || typeof payload !== "object") return false;
   const candidate = payload as Record<string, unknown>;
   return (

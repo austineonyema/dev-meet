@@ -12,6 +12,7 @@ const NON_REFRESHABLE_PATHS = new Set([
 
 type ApiErrorPayload = {
   message?: string | string[];
+  code?: string;
 };
 
 type ApiRequestInit = RequestInit & {
@@ -48,10 +49,25 @@ function extractMessage(payload: unknown): string | null {
   return null;
 }
 
+function extractCode(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") return null;
+  const code = (payload as ApiErrorPayload).code;
+  return typeof code === "string" && code.length > 0 ? code : null;
+}
+
 export function getApiErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof ApiError) return error.message;
   if (error instanceof Error && error.message) return error.message;
   return fallback;
+}
+
+export function isBackendNotReadyError(error: unknown): boolean {
+  if (!(error instanceof ApiError)) return false;
+  const code = extractCode(error.payload);
+  if (code === "BACKEND_NOT_READY" || code === "BACKEND_UNAVAILABLE") {
+    return true;
+  }
+  return error.status === 503 || error.status === 501 || error.status === 504;
 }
 
 function shouldAttemptRefresh(path: string, init: ApiRequestInit): boolean {

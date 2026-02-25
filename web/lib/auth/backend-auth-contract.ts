@@ -1,9 +1,4 @@
-export type AuthUser = {
-  id: string;
-  email: string;
-  name?: string | null;
-  role?: string;
-};
+import type { AuthUser } from "./auth-models";
 
 export type NormalizedTokenLoginResponse = {
   user: AuthUser;

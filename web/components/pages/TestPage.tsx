@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getApiErrorMessage, getUsers, type ApiError } from "@/lib/api";
+import {
+  getApiErrorMessage,
+  getUsers,
+  isBackendNotReadyError,
+  type ApiError,
+} from "@/lib/api";
 import type { UserRecord } from "@/lib/users";
 import { UsersList } from "@/components/users";
 
@@ -36,6 +41,7 @@ export function TestPage() {
     error instanceof Error &&
     "status" in error &&
     (((error as ApiError).status === 401) || ((error as ApiError).status === 403));
+  const isBackendUnavailable = isBackendNotReadyError(error);
 
   return (
     <section className="mx-auto max-w-5xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
@@ -71,6 +77,15 @@ export function TestPage() {
               >
                 Go to login
               </Link>
+            </div>
+          ) : isBackendUnavailable ? (
+            <div className="space-y-3">
+              <p className="text-amber-200">
+                Users backend endpoint is not ready yet. Frontend integration is prepared and waiting for backend availability.
+              </p>
+              <p className="font-mono text-xs text-text-muted">
+                {getApiErrorMessage(error, "Backend endpoint not ready.")}
+              </p>
             </div>
           ) : (
             <p className="text-error">

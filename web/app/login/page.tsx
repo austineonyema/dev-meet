@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { Button, Input } from "@/components/ui";
 import { loginSchema, type LoginFormData } from "@/schema/login.schema";
-import { getApiErrorMessage, login } from "@/lib/api";
+import { getApiErrorMessage, isBackendNotReadyError, login } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,6 +33,15 @@ export default function LoginPage() {
       router.push(safeTarget);
       router.refresh();
     } catch (error) {
+      if (isBackendNotReadyError(error)) {
+        setError("root", {
+          type: "server",
+          message:
+            "Auth backend is not ready yet. Login endpoint is unavailable in this environment.",
+        });
+        return;
+      }
+
       setError("password", {
         type: "server",
         message: getApiErrorMessage(error, "Unable to sign in. Check your credentials."),
@@ -53,6 +62,12 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          {errors.root?.message ? (
+            <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+              {errors.root.message}
+            </div>
+          ) : null}
+
           <div className="space-y-3">
             <div className="relative group">
               <div className="absolute left-3 top-3 text-text-muted group-focus-within:text-terminal transition-colors">

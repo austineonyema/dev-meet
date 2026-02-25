@@ -3,7 +3,7 @@ import {
   normalizeLoginResponseWithOptionalRefresh,
   normalizeTokenLoginResponse,
 } from "@/lib/auth/backend-auth-contract";
-import type { AuthUser } from "@/lib/api";
+import type { AuthUser } from "@/lib/auth/auth-models";
 
 export type RotatedTokens = {
   accessToken: string;

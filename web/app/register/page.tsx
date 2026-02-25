@@ -8,7 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { Button, Input } from "@/components/ui";
 import { registerSchema, type RegisterFormData } from "@/schema/register.schema";
-import { getApiErrorMessage, register as registerUser } from "@/lib/api";
+import {
+  getApiErrorMessage,
+  isBackendNotReadyError,
+  register as registerUser,
+} from "@/lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -37,6 +41,15 @@ export default function RegisterPage() {
       }
       router.refresh();
     } catch (error) {
+      if (isBackendNotReadyError(error)) {
+        setError("root", {
+          type: "server",
+          message:
+            "Registration backend is not ready yet. Register endpoint is unavailable in this environment.",
+        });
+        return;
+      }
+
       setError("email", {
         type: "server",
         message: getApiErrorMessage(error, "Unable to create your profile."),
@@ -57,6 +70,12 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          {errors.root?.message ? (
+            <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+              {errors.root.message}
+            </div>
+          ) : null}
+
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="relative group">

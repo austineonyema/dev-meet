@@ -1,31 +1,18 @@
 import { apiRequest } from "./http";
+import type {
+  AuthUser,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from "@/lib/auth/auth-models";
 
-export type LoginRequest = {
-  email: string;
-  password: string;
-};
-
-export type AuthUser = {
-  id: string;
-  email: string;
-  name?: string | null;
-  role?: string;
-};
-
-export type LoginResponse = {
-  user: AuthUser;
-};
-
-export type RegisterRequest = {
-  email: string;
-  name: string;
-  password: string;
-};
-
-export type RegisterResponse = {
-  user: AuthUser;
-  requiresLogin: boolean;
-  message?: string;
+export type {
+  AuthUser,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
 };
 
 export function login(payload: LoginRequest) {

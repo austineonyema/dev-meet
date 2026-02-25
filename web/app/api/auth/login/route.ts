@@ -7,13 +7,9 @@ import {
   type NormalizedTokenLoginResponse,
 } from "@/lib/auth/backend-auth-contract";
 import { setAuthCookies } from "@/lib/auth/session-cookies";
+import type { LoginRequest, LoginResponse } from "@/lib/auth/auth-models";
 
-type LoginPayload = {
-  email: string;
-  password: string;
-};
-
-function isLoginPayload(payload: unknown): payload is LoginPayload {
+function isLoginPayload(payload: unknown): payload is LoginRequest {
   if (!payload || typeof payload !== "object") return false;
   const candidate = payload as Record<string, unknown>;
   return (
@@ -50,7 +46,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = NextResponse.json({ user: result.user }, { status: 200 });
+    const response = NextResponse.json<LoginResponse>(
+      { user: result.user },
+      { status: 200 },
+    );
     setAuthCookies(response, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,

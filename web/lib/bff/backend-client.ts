@@ -2,6 +2,7 @@ const DEFAULT_BACKEND_API_BASE_URL = "http://localhost:3000/api/v1";
 
 type ApiErrorPayload = {
   message?: string | string[];
+  code?: string;
 };
 
 export class BackendApiError extends Error {
@@ -38,11 +39,20 @@ export async function backendRequest<TResponse>(
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${getBackendApiBaseUrl()}${path}`, {
-    ...init,
-    headers,
-    cache: "no-store",
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${getBackendApiBaseUrl()}${path}`, {
+      ...init,
+      headers,
+      cache: "no-store",
+    });
+  } catch {
+    throw new BackendApiError("Backend service unavailable.", 503, {
+      code: "BACKEND_UNAVAILABLE",
+      message:
+        "Backend service is unavailable. Ensure backend is running and routes are implemented.",
+    });
+  }
 
   const payload = (await response.json().catch(() => null)) as unknown;
 
