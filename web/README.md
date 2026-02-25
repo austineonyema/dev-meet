@@ -2,6 +2,15 @@
 
 This folder is the Next.js frontend shell for the Dev-Meet BFF migration.
 
+## Development
+
+From the monorepo root:
+
+- `npm run dev`: starts `api + web` (default cutover path).
+- `npm run dev:legacy`: starts `api + client` (rollback path).
+- `npm run api`: starts backend only.
+- `npm run web`: starts Next frontend only.
+
 ## Environment
 
 Create `web/.env.local` from `web/.env.example`.
