@@ -7,10 +7,10 @@ export function ActivitySection() {
     <section className="py-14 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <ScrollReveal>
+          <ScrollReveal className="min-w-0">
             <LiveActivityFeed />
           </ScrollReveal>
-          <ScrollReveal delay={90}>
+          <ScrollReveal className="min-w-0" delay={90}>
             <StartHereCard />
           </ScrollReveal>
         </div>

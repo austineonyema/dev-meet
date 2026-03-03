@@ -23,7 +23,12 @@ export function ScrollReveal({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (initiallyVisible) {
+    const isFigmaCaptureMode =
+      typeof window !== "undefined" &&
+      window.location.hash.includes("figmacapture=");
+
+    if (initiallyVisible || isFigmaCaptureMode) {
+      setIsVisible(true);
       return;
     }
 

@@ -4,35 +4,35 @@ import { Button } from "@/components/ui";
 
 export function StartHereCard() {
   return (
-    <div className="terminal-box rounded-xl overflow-hidden">
+    <div className="terminal-box min-w-0 overflow-hidden rounded-xl">
       <div className="flex items-center gap-3 px-4 py-3 bg-surface-800 border-b border-terminal/10">
         <Sparkles className="w-4 h-4 text-terminal" />
-        <span className="font-mono text-sm text-text-primary">START_HERE.md</span>
+        <span className="font-mono text-sm text-text-primary break-all">START_HERE.md</span>
       </div>
 
       <div className="p-5 sm:p-6">
-        <h3 className="text-xl sm:text-2xl font-bold text-text-primary mb-3">
+        <h3 className="mb-3 break-words text-xl font-bold text-text-primary sm:text-2xl">
           Start building with the right people
         </h3>
-        <p className="text-text-secondary leading-relaxed mb-5">
+        <p className="mb-5 break-words leading-relaxed text-text-secondary">
           Create your profile, join engineering discussions, and build
           relationships that improve how you design and ship software.
         </p>
 
         <div className="space-y-2.5 mb-5 font-mono text-sm">
-          <p className="text-text-primary">
+          <p className="break-words text-text-primary">
             <span className="text-terminal">1.</span> Set up your engineering profile
           </p>
-          <p className="text-text-primary">
+          <p className="break-words text-text-primary">
             <span className="text-terminal">2.</span> Follow tracks aligned with your
             stack
           </p>
-          <p className="text-text-primary">
+          <p className="break-words text-text-primary">
             <span className="text-terminal">3.</span> Contribute and connect with peers
           </p>
         </div>
 
-        <Link href="/register">
+        <Link href="/register" className="block w-full sm:inline-block sm:w-auto">
           <Button
             size="lg"
             className="w-full sm:w-auto bg-terminal hover:bg-terminal-dim text-surface-950 font-mono font-semibold"

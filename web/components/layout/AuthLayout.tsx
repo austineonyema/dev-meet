@@ -1,14 +1,36 @@
+"use client";
+
 import Link from "next/link";
 import { Terminal } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 type AuthLayoutProps = {
   children: ReactNode;
 };
 
 export function AuthLayout({ children }: AuthLayoutProps) {
+  const [captureLabel, setCaptureLabel] = useState<string | null>(null);
+  const [captureViewport, setCaptureViewport] = useState<string | null>(null);
+
+  useEffect(() => {
+    const isFigmaCaptureMode = window.location.hash.includes("figmacapture=");
+    if (!isFigmaCaptureMode) {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    setCaptureLabel(url.searchParams.get("capture"));
+    setCaptureViewport(`${window.innerWidth}x${window.innerHeight}`);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-3 sm:p-4 relative overflow-x-hidden overflow-y-auto">
+      {captureLabel ? (
+        <div className="fixed left-3 top-16 z-[70] rounded border border-terminal/40 bg-surface-900/95 px-2 py-1 font-mono text-[10px] tracking-widest text-terminal uppercase">
+          {captureLabel}
+          {captureViewport ? ` ${captureViewport}` : ""}
+        </div>
+      ) : null}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-56 h-56 bg-terminal/5 rounded-full blur-[90px]" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-500/10 rounded-full blur-[110px]" />
