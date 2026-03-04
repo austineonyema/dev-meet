@@ -3,7 +3,7 @@ import { platformSignals } from "./data";
 
 export function PlatformSignalsPanel() {
   return (
-    <div className="terminal-box rounded-xl h-full p-5 sm:p-6">
+    <div className="terminal-box h-full min-w-0 overflow-hidden rounded-xl p-5 sm:p-6">
       <div className="flex items-center gap-2 mb-4">
         <Rocket className="w-4 h-4 text-terminal" />
         <h2 className="font-mono text-sm text-text-primary">Platform Signals</h2>
@@ -15,7 +15,7 @@ export function PlatformSignalsPanel() {
             key={signal.label}
             className="rounded-lg border border-terminal/10 bg-surface-800/70 px-3 py-2.5"
           >
-            <p className="text-xs text-text-muted font-mono">{signal.label}</p>
+            <p className="break-words font-mono text-xs text-text-muted">{signal.label}</p>
             <p className="text-lg font-semibold text-text-primary">{signal.value}</p>
           </div>
         ))}

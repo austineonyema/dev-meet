@@ -8,11 +8,11 @@ export function CommandSurfaceList() {
   const [hoveredCommand, setHoveredCommand] = useState<number | null>(null);
 
   return (
-    <div className="terminal-box rounded-xl divide-y divide-terminal/10 overflow-hidden">
+    <div className="terminal-box min-w-0 overflow-hidden rounded-xl divide-y divide-terminal/10">
       {commandSurface.map((command, index) => (
         <div
           key={command.command}
-          className={`flex items-center gap-4 p-4 sm:p-5 transition-all ${
+          className={`flex min-w-0 items-center gap-4 overflow-hidden p-4 transition-all sm:p-5 ${
             hoveredCommand === index ? "bg-terminal/5" : "hover:bg-surface-800/80"
           }`}
           onMouseEnter={() => setHoveredCommand(index)}
@@ -25,7 +25,7 @@ export function CommandSurfaceList() {
             } transition-colors`}
           />
           <div className="flex-1 min-w-0">
-            <p className="font-mono text-text-primary">
+            <p className="break-all font-mono text-text-primary sm:break-normal">
               <span className="text-terminal/60">&gt; </span>
               {command.command}
             </p>

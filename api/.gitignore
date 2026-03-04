@@ -402,3 +402,4 @@ dist
 
 /generated/prisma
 .jsonc
+dev-meet.code-workspace

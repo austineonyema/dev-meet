@@ -58,7 +58,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="flex flex-col relative">
+    <div className="relative flex flex-col overflow-x-clip">
       {captureLabel ? (
         <div className="fixed left-3 top-16 z-[70] rounded border border-terminal/40 bg-surface-900/95 px-2 py-1 font-mono text-[10px] tracking-widest text-terminal uppercase">
           {captureLabel}

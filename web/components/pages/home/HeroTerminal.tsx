@@ -5,14 +5,14 @@ import { TypingText } from "./TypingText";
 
 export function HeroTerminal() {
   return (
-    <div className="border border-terminal/20 bg-surface-900 rounded-xl overflow-hidden h-full">
-      <div className="flex items-center gap-2 px-4 py-3 bg-surface-800 border-b border-terminal/10">
+    <div className="h-full min-w-0 overflow-hidden rounded-xl border border-terminal/20 bg-surface-900">
+      <div className="flex min-w-0 items-center gap-2 border-b border-terminal/10 bg-surface-800 px-4 py-3">
         <div className="flex gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
           <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
         </div>
-        <span className="font-mono text-xs text-text-muted ml-2">
+        <span className="ml-2 min-w-0 truncate font-mono text-xs text-text-muted">
           ~/dev-meet/onboarding
         </span>
       </div>
@@ -21,11 +21,11 @@ export function HeroTerminal() {
         <p className="text-text-muted text-sm mb-3">
           <span className="text-terminal">$</span> open mission.md
         </p>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary leading-tight mb-4">
+        <h1 className="mb-4 break-words text-3xl font-bold leading-tight text-text-primary sm:text-4xl lg:text-5xl">
           <span className="text-terminal">&gt;</span>{" "}
           <TypingText text="Build better software with better people." />
         </h1>
-        <p className="text-text-secondary text-base sm:text-lg max-w-2xl leading-relaxed mb-6">
+        <p className="mb-6 max-w-2xl break-words text-base leading-relaxed text-text-secondary sm:text-lg">
           Dev-Meet is a focused community for software developers and engineers to
           exchange practical knowledge, form meaningful technical connections, and
           ship with more confidence.
@@ -43,7 +43,7 @@ export function HeroTerminal() {
           </Link>
           <Link
             href="/posts"
-            className="font-mono text-text-secondary hover:text-terminal transition-colors inline-flex items-center gap-2"
+            className="inline-flex min-w-0 items-center gap-2 break-words font-mono text-text-secondary transition-colors hover:text-terminal"
           >
             <span className="text-terminal/60">&gt;</span> Browse engineering posts
           </Link>
