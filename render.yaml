@@ -8,6 +8,18 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 90m
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_REFRESH_TOKEN_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_ORIGIN
+        sync: false
 
   - type: web
     name: dev-meet-web
@@ -20,3 +32,19 @@ services:
         value: production
       - key: BACKEND_API_URL
         value: https://dev-meet-api.onrender.com/api/v1
+      - key: NEXT_PUBLIC_WEB_API_BASE_URL
+        value: /api
+      - key: NEXT_PUBLIC_UNAUTHORIZED_REDIRECT_PATH
+        value: /login
+      - key: ACCESS_COOKIE_NAME
+        value: dev_meet_at
+      - key: REFRESH_COOKIE_NAME
+        value: dev_meet_rt
+      - key: COOKIE_SAME_SITE
+        value: lax
+      - key: COOKIE_DOMAIN
+        value: ""
+      - key: ACCESS_COOKIE_MAX_AGE_MS
+        value: "900000"
+      - key: REFRESH_COOKIE_MAX_AGE_MS
+        value: "604800000"
